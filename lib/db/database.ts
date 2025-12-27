@@ -2,25 +2,38 @@ import { Pool, Client, PoolClient, QueryResult } from 'pg';
 
 // Get database connection string from environment variable
 // Format: postgresql://user:password@host:port/database
-// Railway provides DATABASE_URL (or DATABASE_PUBLIC_URL for public connections)
+// Railway provides:
+//   - DATABASE_PRIVATE_URL: Private/internal connection (use this for same-project connections)
+//   - DATABASE_URL: Internal connection (fallback)
+//   - DATABASE_PUBLIC_URL: Public-facing connection (for external connections)
 // Or use individual env vars: PGHOST, PGPORT, PGDATABASE, PGUSER, PGPASSWORD
 // On macOS with Homebrew, the default user is usually the current user, not 'postgres'
 const defaultUser = process.env.USER || process.env.USERNAME || 'postgres';
-const connectionString = process.env.DATABASE_URL || 
-  process.env.DATABASE_PUBLIC_URL ||
+const connectionString = process.env.DATABASE_PRIVATE_URL ||  // Railway private/internal (preferred for same-project)
+  process.env.DATABASE_URL ||                                  // Railway internal (fallback)
+  process.env.DATABASE_PUBLIC_URL ||                           // Railway public
   (process.env.PGHOST ? 
     `postgresql://${process.env.PGUSER || defaultUser}:${process.env.PGPASSWORD || ''}@${process.env.PGHOST}:${process.env.PGPORT || 5432}/${process.env.PGDATABASE || 'politracker'}` :
     `postgresql://${defaultUser}@localhost:5432/politracker`
   );
 
-// Log connection info in development (but not the full connection string for security)
-if (process.env.NODE_ENV !== 'production' && connectionString) {
+// Log connection info (but not the full connection string for security)
+if (connectionString) {
   try {
     const url = new URL(connectionString);
-    console.log(`[DB] Connecting to PostgreSQL at ${url.hostname}:${url.port || 5432}/${url.pathname.slice(1)}`);
+    const connectionType = process.env.DATABASE_PRIVATE_URL ? 'private' : 
+                          process.env.DATABASE_URL ? 'internal' :
+                          process.env.DATABASE_PUBLIC_URL ? 'public' : 'default';
+    console.log(`[DB] Connecting to PostgreSQL (${connectionType}) at ${url.hostname}:${url.port || 5432}/${url.pathname.slice(1)}`);
   } catch (e) {
     // Ignore URL parsing errors
   }
+} else {
+  console.error('[DB] ❌ No database connection string found! Check environment variables:');
+  console.error('   - DATABASE_PRIVATE_URL (Railway private - recommended)');
+  console.error('   - DATABASE_URL (Railway internal)');
+  console.error('   - DATABASE_PUBLIC_URL (Railway public)');
+  console.error('   - PGHOST, PGPORT, etc. (individual vars)');
 }
 
 // Create a connection pool for better performance
@@ -59,17 +72,25 @@ export function getDatabase(): Pool {
     pool = new Pool(poolConfig);
 
     // Handle pool errors with better logging
-    pool.on('error', (err: Error) => {
+    pool.on('error', (err: Error & { code?: string }) => {
       console.error('❌ Unexpected error on idle PostgreSQL client:', err.message);
+      if (err.code) {
+        console.error(`   Error code: ${err.code}`);
+      }
+      if (err.code === 'ECONNREFUSED') {
+        console.error('   💡 Connection refused - possible causes:');
+        console.error('      1. PostgreSQL service is not running on Railway');
+        console.error('      2. Services are not in the same Railway project');
+        console.error('      3. Check Railway dashboard → PostgreSQL service status');
+        console.error('      4. Ensure DATABASE_PRIVATE_URL or DATABASE_URL is set correctly');
+      }
       if (err.stack) {
         console.error(err.stack);
       }
     });
 
-    // Log successful pool creation in production for debugging
-    if (process.env.NODE_ENV === 'production') {
-      console.log('[DB] PostgreSQL connection pool created');
-    }
+    // Log successful pool creation for debugging
+    console.log('[DB] PostgreSQL connection pool created');
   }
   return pool;
 }
@@ -77,7 +98,18 @@ export function getDatabase(): Pool {
 // Get a single client for transactions (caller must release it)
 export async function getClient(): Promise<PoolClient> {
   const pool = getDatabase();
-  return await pool.connect();
+  try {
+    return await pool.connect();
+  } catch (error: any) {
+    if (error.code === 'ECONNREFUSED') {
+      console.error('[DB] ❌ Connection refused when getting client');
+      console.error('   This usually means:');
+      console.error('   1. PostgreSQL service is not running on Railway');
+      console.error('   2. Services are in different Railway projects');
+      console.error('   3. Check Railway dashboard → PostgreSQL service → Status');
+    }
+    throw error;
+  }
 }
 
 export async function closeDatabase() {

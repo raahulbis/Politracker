@@ -6,37 +6,51 @@ This guide helps you troubleshoot and configure PostgreSQL connections on Railwa
 
 Railway automatically provides several PostgreSQL-related environment variables when you connect a PostgreSQL service:
 
-- `DATABASE_URL` - Internal connection URL (use this for same-project connections)
+- `DATABASE_PRIVATE_URL` - **Private/internal connection URL (USE THIS for same-project connections)**
+- `DATABASE_URL` - Internal connection URL (fallback)
 - `DATABASE_PUBLIC_URL` - Public-facing connection URL (for external connections)
 - `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD` - Individual connection parameters
 
 ## Connection Configuration
 
-The application is configured to use `DATABASE_URL` first, then fall back to `DATABASE_PUBLIC_URL` if needed.
+The application is configured to use connection strings in this priority order:
+1. `DATABASE_PRIVATE_URL` (Railway private/internal - **recommended**)
+2. `DATABASE_URL` (Railway internal - fallback)
+3. `DATABASE_PUBLIC_URL` (Railway public)
+4. Individual `PGHOST`, `PGPORT`, etc. variables
+5. Default localhost (development only)
 
-**Important**: Use `DATABASE_URL` for connections within the same Railway project (recommended for cost and performance).
+**Important**: Use `DATABASE_PRIVATE_URL` for connections within the same Railway project (recommended for reliability and to avoid egress costs).
 
 ## Common Issues and Solutions
 
-### 1. Database Not Connecting
+### 1. Database Not Connecting (ECONNREFUSED)
 
 **Symptoms:**
+- `ECONNREFUSED` errors in logs
 - Application starts but can't query the database
 - 500 errors when accessing database endpoints
 - Connection timeout errors in logs
 
 **Solutions:**
 
-1. **Verify DATABASE_URL is Set**
+1. **Check PostgreSQL Service Status**
+   - Go to Railway dashboard → Your PostgreSQL service
+   - Ensure the service is **running** (not paused/stopped)
+   - Check for any service incidents or errors
+
+2. **Verify Services Are in Same Project**
+   - Both your application service and PostgreSQL service must be in the **same Railway project**
+   - If they're in different projects, they won't be able to connect internally
+   - Move one service to match the other, or use `DATABASE_PUBLIC_URL` (not recommended)
+
+3. **Verify Connection URL Variables**
    - Go to your Railway project → Variables tab
-   - Ensure `DATABASE_URL` is present and not empty
-   - If missing, add the PostgreSQL service to your project
+   - Ensure `DATABASE_PRIVATE_URL` or `DATABASE_URL` is present and not empty
+   - **Preferred**: Use `DATABASE_PRIVATE_URL` (automatically provided when services are in same project)
+   - If missing, ensure PostgreSQL service is added to the same project
 
-2. **Check Service Status**
-   - Ensure your PostgreSQL service is running (not paused)
-   - Check for any service incidents in Railway dashboard
-
-3. **Verify Database Schema**
+4. **Verify Database Schema**
    - Your database might be empty - you need to run the setup script
    - On Railway, you can run setup commands via Railway CLI or one-off containers
 
