@@ -41,6 +41,7 @@
     "db:add-category-column": "tsx scripts/add-bill-category-column.ts",
     "db:add-sponsor-party-column": "tsx scripts/add-sponsor-party-column.ts",
     "db:add-updated-at-column": "tsx scripts/add-updated-at-column.ts",
+    "db:dump": "tsx scripts/dump-database-pg.ts",
     "download-logos": "tsx scripts/download-party-logos.ts"
   },
   "dependencies": {
