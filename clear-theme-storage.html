@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear Theme Storage</title>
+</head>
+<body>
+    <h1>Clear Theme Storage</h1>
+    <p>Click the button below to clear the theme from localStorage:</p>
+    <button onclick="clearTheme()">Clear Theme Storage</button>
+    <div id="result"></div>
+    
+    <script>
+        function clearTheme() {
+            try {
+                localStorage.removeItem('theme');
+                document.getElementById('result').innerHTML = 
+                    '<p style="color: green;">Theme cleared from localStorage! You can close this page now.</p>';
+                console.log('Theme cleared from localStorage');
+            } catch (e) {
+                document.getElementById('result').innerHTML = 
+                    '<p style="color: red;">Error: ' + e.message + '</p>';
+            }
+        }
+        
+        // Show current theme
+        window.onload = function() {
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme) {
+                document.getElementById('result').innerHTML = 
+                    '<p>Current theme in localStorage: <strong>' + currentTheme + '</strong></p>';
+            } else {
+                document.getElementById('result').innerHTML = 
+                    '<p>No theme found in localStorage</p>';
+            }
+        };
+    </script>
+</body>
+</html>
+
