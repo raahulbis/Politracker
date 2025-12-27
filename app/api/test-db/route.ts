@@ -2,26 +2,26 @@ import { NextResponse } from 'next/server';
 import { queryOne } from '@/lib/db/database';
 
 export async function GET() {
-  try {
-    // Check which connection URL is being used
-    const connectionUrl = process.env.DATABASE_PRIVATE_URL || 
-                         process.env.DATABASE_URL || 
-                         process.env.DATABASE_PUBLIC_URL;
-    const hasDatabaseUrl = !!connectionUrl;
-    const hasDatabasePrivateUrl = !!process.env.DATABASE_PRIVATE_URL;
-    const hasDatabasePublicUrl = !!process.env.DATABASE_PUBLIC_URL;
-    
-    // Get connection string info (without exposing credentials)
-    let connectionInfo: string | null = null;
-    if (connectionUrl) {
-      try {
-        const url = new URL(connectionUrl);
-        connectionInfo = `${url.hostname}:${url.port || 5432}/${url.pathname.slice(1) || '(no database)'}`;
-      } catch (e) {
-        connectionInfo = 'Invalid URL format';
-      }
+  // Get connection info (outside try/catch so it's available in error handler)
+  const connectionUrl = process.env.DATABASE_PRIVATE_URL || 
+                       process.env.DATABASE_URL || 
+                       process.env.DATABASE_PUBLIC_URL;
+  const hasDatabaseUrl = !!connectionUrl;
+  const hasDatabasePrivateUrl = !!process.env.DATABASE_PRIVATE_URL;
+  const hasDatabasePublicUrl = !!process.env.DATABASE_PUBLIC_URL;
+  
+  // Get connection string info (without exposing credentials)
+  let connectionInfo: string | null = null;
+  if (connectionUrl) {
+    try {
+      const url = new URL(connectionUrl);
+      connectionInfo = `${url.hostname}:${url.port || 5432}/${url.pathname.slice(1) || '(no database)'}`;
+    } catch (e) {
+      connectionInfo = 'Invalid URL format';
     }
+  }
 
+  try {
     const start = Date.now();
     const result = await queryOne<{ count: string }>('SELECT COUNT(*)::text as count FROM mps');
     const duration = Date.now() - start;
@@ -34,7 +34,7 @@ export async function GET() {
         privateUrlSet: hasDatabasePrivateUrl,
         urlSet: hasDatabaseUrl,
         publicUrlSet: hasDatabasePublicUrl,
-        connectionInfo,
+        connectionInfo: connectionInfo || 'Not available',
         connectionType: process.env.DATABASE_PRIVATE_URL ? 'private' : 
                        process.env.DATABASE_URL ? 'internal' :
                        process.env.DATABASE_PUBLIC_URL ? 'public' : 'none',
@@ -67,10 +67,13 @@ export async function GET() {
       success: false,
       error: errorDetails,
       database: {
-        privateUrlSet: !!process.env.DATABASE_PRIVATE_URL,
-        urlSet: !!process.env.DATABASE_URL,
-        publicUrlSet: !!process.env.DATABASE_PUBLIC_URL,
+        privateUrlSet: hasDatabasePrivateUrl,
+        urlSet: hasDatabaseUrl,
+        publicUrlSet: hasDatabasePublicUrl,
         connectionInfo: connectionInfo || 'Not available',
+        connectionType: process.env.DATABASE_PRIVATE_URL ? 'private' : 
+                       process.env.DATABASE_URL ? 'internal' :
+                       process.env.DATABASE_PUBLIC_URL ? 'public' : 'none',
       },
       troubleshooting: {
         checkUrl: 'Verify DATABASE_URL is set in Railway Variables',
