@@ -3,16 +3,20 @@ import { queryOne } from '@/lib/db/database';
 
 export async function GET() {
   try {
-    // Check if DATABASE_URL is set
-    const hasDatabaseUrl = !!process.env.DATABASE_URL;
+    // Check which connection URL is being used
+    const connectionUrl = process.env.DATABASE_PRIVATE_URL || 
+                         process.env.DATABASE_URL || 
+                         process.env.DATABASE_PUBLIC_URL;
+    const hasDatabaseUrl = !!connectionUrl;
+    const hasDatabasePrivateUrl = !!process.env.DATABASE_PRIVATE_URL;
     const hasDatabasePublicUrl = !!process.env.DATABASE_PUBLIC_URL;
     
     // Get connection string info (without exposing credentials)
     let connectionInfo: string | null = null;
-    if (process.env.DATABASE_URL) {
+    if (connectionUrl) {
       try {
-        const url = new URL(process.env.DATABASE_URL);
-        connectionInfo = `${url.hostname}:${url.port || 5432}/${url.pathname.slice(1)}`;
+        const url = new URL(connectionUrl);
+        connectionInfo = `${url.hostname}:${url.port || 5432}/${url.pathname.slice(1) || '(no database)'}`;
       } catch (e) {
         connectionInfo = 'Invalid URL format';
       }
@@ -27,9 +31,13 @@ export async function GET() {
       mpCount: result?.count || '0',
       queryTime: `${duration}ms`,
       database: {
+        privateUrlSet: hasDatabasePrivateUrl,
         urlSet: hasDatabaseUrl,
         publicUrlSet: hasDatabasePublicUrl,
         connectionInfo,
+        connectionType: process.env.DATABASE_PRIVATE_URL ? 'private' : 
+                       process.env.DATABASE_URL ? 'internal' :
+                       process.env.DATABASE_PUBLIC_URL ? 'public' : 'none',
       },
       timestamp: new Date().toISOString(),
     });
@@ -59,8 +67,10 @@ export async function GET() {
       success: false,
       error: errorDetails,
       database: {
+        privateUrlSet: !!process.env.DATABASE_PRIVATE_URL,
         urlSet: !!process.env.DATABASE_URL,
         publicUrlSet: !!process.env.DATABASE_PUBLIC_URL,
+        connectionInfo: connectionInfo || 'Not available',
       },
       troubleshooting: {
         checkUrl: 'Verify DATABASE_URL is set in Railway Variables',

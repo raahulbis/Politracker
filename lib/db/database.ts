@@ -1,4 +1,5 @@
 import { Pool, Client, PoolClient, QueryResult } from 'pg';
+import { logDatabaseHealth } from './health-check';
 
 // Get database connection string from environment variable
 // Format: postgresql://user:password@host:port/database
@@ -9,9 +10,13 @@ import { Pool, Client, PoolClient, QueryResult } from 'pg';
 // Or use individual env vars: PGHOST, PGPORT, PGDATABASE, PGUSER, PGPASSWORD
 // On macOS with Homebrew, the default user is usually the current user, not 'postgres'
 const defaultUser = process.env.USER || process.env.USERNAME || 'postgres';
+// Connection string priority:
+// 1. DATABASE_PRIVATE_URL - Railway private/internal (preferred for same-project)
+// 2. DATABASE_URL - Railway internal or custom (fallback)
+// 3. DATABASE_PUBLIC_URL - Railway public (works if internal networking fails)
 const connectionString = process.env.DATABASE_PRIVATE_URL ||  // Railway private/internal (preferred for same-project)
   process.env.DATABASE_URL ||                                  // Railway internal (fallback)
-  process.env.DATABASE_PUBLIC_URL ||                           // Railway public
+  process.env.DATABASE_PUBLIC_URL ||                           // Railway public (fallback if internal fails)
   (process.env.PGHOST ? 
     `postgresql://${process.env.PGUSER || defaultUser}:${process.env.PGPASSWORD || ''}@${process.env.PGHOST}:${process.env.PGPORT || 5432}/${process.env.PGDATABASE || 'politracker'}` :
     `postgresql://${defaultUser}@localhost:5432/politracker`
@@ -53,20 +58,20 @@ export function getDatabase(): Pool {
       query_timeout: 30000,
     };
 
-    // For Railway and production environments, ensure SSL is enabled
-    // Railway requires SSL connections for PostgreSQL
-    // If DATABASE_URL doesn't include sslmode, add it to the connection config
-    if (process.env.NODE_ENV === 'production' || 
-        connectionString.includes('railway.app') || 
-        connectionString.includes('railway.internal') ||
-        process.env.RAILWAY_ENVIRONMENT) {
-      // Check if connection string already has sslmode
-      if (!connectionString.includes('sslmode=')) {
-        // Railway requires SSL, but we'll let the connection string handle it
-        // If Railway's connection string doesn't have sslmode, it should still work
-        // but we can explicitly set SSL for additional safety
-        poolConfig.ssl = { rejectUnauthorized: false };
-      }
+    // Railway's connection strings typically include SSL parameters in the URL itself
+    // We let the connection string handle SSL configuration
+    // Only add explicit SSL config if connection string doesn't specify it
+    // and we're in production/Railway environment
+    const isRailway = connectionString.includes('railway.app') || 
+                      connectionString.includes('railway.internal') ||
+                      process.env.RAILWAY_ENVIRONMENT;
+    
+    if ((process.env.NODE_ENV === 'production' || isRailway) && 
+        !connectionString.includes('sslmode=') && 
+        !connectionString.includes('ssl=')) {
+      // Railway typically includes SSL in connection string, but if not, enable it
+      // Internal connections might work without explicit SSL, but let's be safe
+      poolConfig.ssl = { rejectUnauthorized: false };
     }
 
     pool = new Pool(poolConfig);
@@ -91,6 +96,12 @@ export function getDatabase(): Pool {
 
     // Log successful pool creation for debugging
     console.log('[DB] PostgreSQL connection pool created');
+    
+    // Perform a non-blocking health check (async, doesn't wait)
+    // This helps diagnose connection issues early
+    logDatabaseHealth(pool, connectionString).catch(() => {
+      // Silently fail - health check is just for logging
+    });
   }
   return pool;
 }
