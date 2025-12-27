@@ -38,10 +38,12 @@ export async function getCurrentSessionStartDate(): Promise<string | null> {
   
   // PostgreSQL DATE columns are returned as Date objects by the driver
   // Convert to YYYY-MM-DD string format for consistent string comparison
-  if (session.start_date instanceof Date) {
-    const year = session.start_date.getFullYear();
-    const month = String(session.start_date.getMonth() + 1).padStart(2, '0');
-    const day = String(session.start_date.getDate()).padStart(2, '0');
+  // The interface types start_date as string, but PostgreSQL driver may return Date
+  const startDate: unknown = session.start_date;
+  if (startDate instanceof Date) {
+    const year = startDate.getFullYear();
+    const month = String(startDate.getMonth() + 1).padStart(2, '0');
+    const day = String(startDate.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
   
