@@ -103,7 +103,7 @@ export async function saveNewVotesToDB(mpId: number, votes: Vote[]): Promise<voi
 
         // Find bill_id if we have a bill_number
         // Try to find by bill_number + session first, then fallback to bill_number only
-        const billId = await findBillId(client, vote.bill_number, sessionString);
+        const billId = await findBillId(client, vote.bill_number, sessionString ?? undefined);
 
         // Use SAVEPOINT to allow individual vote failures without aborting the entire transaction
         const savepointName = `sp_vote_${savedCount + errorCount + skippedCount}`;
