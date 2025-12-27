@@ -1,4 +1,4 @@
-import { Pool, Client, QueryResult } from 'pg';
+import { Pool, Client, PoolClient, QueryResult } from 'pg';
 
 // Get database connection string from environment variable
 // Format: postgresql://user:password@host:port/database
@@ -34,7 +34,7 @@ export function getDatabase(): Pool {
 }
 
 // Get a single client for transactions (caller must release it)
-export async function getClient(): Promise<Client> {
+export async function getClient(): Promise<PoolClient> {
   const pool = getDatabase();
   return await pool.connect();
 }
@@ -82,7 +82,7 @@ export async function queryExec(sql: string): Promise<void> {
 }
 
 // Helper for transactions
-export async function transaction<T>(fn: (client: Client) => Promise<T>): Promise<T> {
+export async function transaction<T>(fn: (client: PoolClient) => Promise<T>): Promise<T> {
   const pool = getDatabase();
   const client = await pool.connect();
   try {
