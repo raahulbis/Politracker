@@ -35,6 +35,14 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# database files
+/data/politracker.db
+/data/politracker.db-shm
+/data/politracker.db-wal
+*.db
+*.db-shm
+*.db-wal
+
 # database backups
 /data/*.sql
 /data/*.dump
