@@ -179,7 +179,8 @@ export default function Home() {
           </div>
           
           <div className="text-center mb-12">
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-3">
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-3 flex items-center justify-center gap-2">
+              <span>🇨🇦</span>
               PoliTracker
             </h1>
             <p className="text-lg sm:text-xl text-gray-700 dark:text-gray-300 mb-8">
