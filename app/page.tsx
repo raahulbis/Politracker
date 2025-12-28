@@ -777,6 +777,7 @@ function RecentBillsContent({
     category_name: string | null;
   }>
 }) {
+  const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   
@@ -1096,18 +1097,18 @@ function RecentBillsContent({
                 className="py-3 px-4 -mx-4 border-b border-gray-200 dark:border-slate-700 last:border-b-0 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors group"
                 onClick={(e) => {
                   // Only navigate if not clicking on the Read button
-                  if (billUrl && !(e.target as HTMLElement).closest('a')) {
-                    window.open(billUrl, '_blank', 'noopener,noreferrer');
+                  if (!(e.target as HTMLElement).closest('a')) {
+                    router.push(`/bill/${encodeURIComponent(bill.bill_number)}`);
                   }
                 }}
                 onKeyDown={(e) => {
-                  if ((e.key === 'Enter' || e.key === ' ') && billUrl && !(e.target as HTMLElement).closest('a')) {
+                  if ((e.key === 'Enter' || e.key === ' ') && !(e.target as HTMLElement).closest('a')) {
                     e.preventDefault();
-                    window.open(billUrl, '_blank', 'noopener,noreferrer');
+                    router.push(`/bill/${encodeURIComponent(bill.bill_number)}`);
                   }
                 }}
-                role={billUrl ? "button" : undefined}
-                tabIndex={billUrl ? 0 : undefined}
+                role="button"
+                tabIndex={0}
               >
                 {/* Line 1: Bill number + Title (1-2 lines) + Read button */}
                 <div className="flex items-start justify-between gap-4 mb-1.5">

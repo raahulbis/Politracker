@@ -341,6 +341,173 @@ export async function getMPVotingRecord(mpId: string, mpName: string, dbMPId?: n
 }
 
 /**
+ * Get bill details and all MPs with their last vote for a specific bill
+ * Returns bill info and array of MPs with their last voting stance
+ */
+export async function getBillWithMPVotes(billNumber: string): Promise<{
+  bill: {
+    id: number;
+    bill_number: string;
+    title: string;
+    introduced_date: string | null;
+    status_code: string | null;
+    status: string | null;
+    law: boolean | null;
+    session: string | null;
+    sponsor_politician: string | null;
+    sponsor_party: string | null;
+    category_name: string | null;
+  } | null;
+  mpVotes: Array<{
+    mp_id: number;
+    mp_name: string;
+    party_name: string | null;
+    district_name: string;
+    photo_url: string | null;
+    vote_type: 'Yea' | 'Nay' | 'Paired' | 'Abstained' | 'Not Voting';
+    vote_date: string;
+    motion_title: string | null;
+  }>;
+}> {
+  // First, get the bill details - this should always work
+  let bill: any = null;
+  try {
+    const billSql = convertPlaceholders(`
+      SELECT 
+        b.id,
+        b.bill_number,
+        b.title,
+        b.introduced_date,
+        b.status_code,
+        b.status,
+        b.law,
+        b.session,
+        b.sponsor_politician,
+        b.sponsor_party,
+        bc.name as category_name
+      FROM bills_motions b
+      LEFT JOIN bill_policy_categories bc ON b.policy_category_id = bc.id
+      WHERE b.bill_number = ?
+      ORDER BY b.introduced_date DESC
+      LIMIT 1
+    `);
+    
+    bill = await queryOne<any>(billSql, [billNumber]);
+  } catch (error) {
+    console.error(`[getBillWithMPVotes] Error fetching bill ${billNumber}:`, error);
+    return { bill: null, mpVotes: [] };
+  }
+  
+  if (!bill) {
+    console.log(`[getBillWithMPVotes] Bill ${billNumber} not found in database`);
+    return { bill: null, mpVotes: [] };
+  }
+  
+  console.log(`[getBillWithMPVotes] Found bill ${billNumber} (id: ${bill.id})`);
+  
+  // Get bill_id - use the bill we found
+  const billId = bill.id;
+  
+  // Use two separate queries for simplicity
+  // Query 1: Check if votes exist
+  // Query 2: Get latest vote per MP with MP details
+  let mpVotes: any[] = [];
+  
+  try {
+    // First query: Check if there are any votes for this bill
+    const checkVotesSql = convertPlaceholders(`
+      SELECT COUNT(*) as count
+      FROM votes v
+      WHERE v.bill_id = ? OR v.bill_number = ?
+    `);
+    
+    const voteCheck = await queryOne<{ count: string }>(checkVotesSql, [billId, billNumber]);
+    const voteCount = voteCheck ? parseInt(voteCheck.count, 10) : 0;
+    
+    if (voteCount === 0) {
+      console.log(`[getBillWithMPVotes] No votes found for bill ${billNumber}`);
+    } else {
+      // Second query: Get the latest vote per MP using window function
+      const latestVotesSql = convertPlaceholders(`
+        SELECT 
+          m.id as mp_id,
+          m.name as mp_name,
+          m.party_name,
+          m.district_name,
+          m.photo_url,
+          v.vote_type,
+          v.date as vote_date,
+          v.motion_title
+        FROM (
+          SELECT 
+            v2.mp_id,
+            v2.vote_type,
+            v2.date,
+            v2.motion_title,
+            ROW_NUMBER() OVER (PARTITION BY v2.mp_id ORDER BY v2.date DESC) as rn
+          FROM votes v2
+          WHERE (v2.bill_id = ? OR v2.bill_number = ?)
+        ) v
+        INNER JOIN mps m ON v.mp_id = m.id
+        WHERE v.rn = 1
+      `);
+      
+      mpVotes = await queryAll<any>(latestVotesSql, [billId, billNumber]);
+      
+      // Sort by party and name
+      mpVotes.sort((a, b) => {
+        const partyA = a.party_name || '';
+        const partyB = b.party_name || '';
+        if (partyA !== partyB) {
+          return partyA.localeCompare(partyB);
+        }
+        return a.mp_name.localeCompare(b.mp_name);
+      });
+      
+      console.log(`[getBillWithMPVotes] Found ${mpVotes.length} MP votes for bill ${billNumber}`);
+    }
+  } catch (error) {
+    // Log error but don't fail - still return bill details
+    console.error(`[getBillWithMPVotes] Error fetching votes for bill ${billNumber}:`, error);
+    if (error instanceof Error) {
+      console.error(`[getBillWithMPVotes] Error message: ${error.message}`);
+      console.error(`[getBillWithMPVotes] Error stack: ${error.stack}`);
+    }
+    mpVotes = [];
+  }
+  
+  // Always return bill details, even if votes query failed
+  const result = {
+    bill: {
+      id: bill.id,
+      bill_number: bill.bill_number,
+      title: bill.title,
+      introduced_date: bill.introduced_date,
+      status_code: bill.status_code,
+      status: bill.status,
+      law: bill.law,
+      session: bill.session,
+      sponsor_politician: bill.sponsor_politician,
+      sponsor_party: bill.sponsor_party,
+      category_name: bill.category_name,
+    },
+    mpVotes: mpVotes.map((row) => ({
+      mp_id: row.mp_id,
+      mp_name: row.mp_name,
+      party_name: row.party_name,
+      district_name: row.district_name,
+      photo_url: row.photo_url,
+      vote_type: row.vote_type,
+      vote_date: row.vote_date,
+      motion_title: row.motion_title,
+    })),
+  };
+  
+  console.log(`[getBillWithMPVotes] Returning bill ${billNumber} with ${result.mpVotes.length} votes`);
+  return result;
+}
+
+/**
  * Helper to map database row to MP type
  */
 function mapMPFromDB(row: any): MP {

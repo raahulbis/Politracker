@@ -37,21 +37,29 @@ export default function MPExpenses({ expenses, partyColors }: MPExpensesProps) {
       label: 'Staff Salaries',
       value: expenses.total_staff_salaries,
       description: 'Total staff salary expenses across all quarters',
+      color: '#3B82F6', // Blue - professional, stable
+      colorLight: '#DBEAFE', // Light blue for backgrounds
     },
     {
       label: 'Travel',
       value: expenses.total_travel,
       description: 'Total travel expenses across all quarters',
+      color: '#14B8A6', // Teal - movement, fresh
+      colorLight: '#CCFBF1', // Light teal for backgrounds
     },
     {
       label: 'Hospitality',
       value: expenses.total_hospitality,
       description: 'Total hospitality expenses across all quarters',
+      color: '#F59E0B', // Amber - warm, social
+      colorLight: '#FEF3C7', // Light amber for backgrounds
     },
     {
       label: 'Contracts',
       value: expenses.total_contracts,
       description: 'Total contract expenses across all quarters',
+      color: '#8B5CF6', // Purple - business, formal
+      colorLight: '#EDE9FE', // Light purple for backgrounds
     },
   ];
 
@@ -116,13 +124,56 @@ export default function MPExpenses({ expenses, partyColors }: MPExpensesProps) {
             </span>
           )}
         </div>
-        <button
-          onClick={() => setViewMode(viewMode === 'chart' ? 'table' : 'chart')}
-          className="text-sm font-medium hover:underline transition-colors"
-          style={{ color: partyColors.primary }}
-        >
-          {viewMode === 'chart' ? 'View table' : 'View chart'}
-        </button>
+        <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+          <button
+            onClick={() => setViewMode('chart')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+              viewMode === 'chart'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+            title="Chart view"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              />
+            </svg>
+            <span>Chart</span>
+          </button>
+          <button
+            onClick={() => setViewMode('table')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+              viewMode === 'table'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+            title="Table view"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+              />
+            </svg>
+            <span>Table</span>
+          </button>
+        </div>
       </div>
 
       {viewMode === 'chart' ? (
@@ -143,9 +194,10 @@ export default function MPExpenses({ expenses, partyColors }: MPExpensesProps) {
               </div>
               <div className="h-8 bg-gray-100 rounded overflow-hidden">
                 <div
-                  className="h-full bg-gray-300 group-hover:bg-gray-400 transition-colors rounded"
+                  className="h-full transition-all rounded"
                   style={{
                     width: `${item.percentage}%`,
+                    backgroundColor: item.color,
                   }}
                 />
               </div>
@@ -176,21 +228,25 @@ export default function MPExpenses({ expenses, partyColors }: MPExpensesProps) {
               {expenseItemsWithPercentage.map((item, index) => (
                 <tr
                   key={item.label}
-                  className={`border-b border-gray-200 hover:bg-gray-50 transition-colors ${
-                    index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                  }`}
+                  className="border-b border-gray-200 transition-colors"
                   style={{
-                    backgroundColor: undefined, // Will use hover state
+                    backgroundColor: index % 2 === 0 ? 'white' : item.colorLight,
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = `${partyColors.primary}08`;
+                    e.currentTarget.style.backgroundColor = item.colorLight;
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = index % 2 === 0 ? 'white' : '#F9FAFB';
+                    e.currentTarget.style.backgroundColor = index % 2 === 0 ? 'white' : item.colorLight;
                   }}
                 >
                   <td className="py-2.5 px-4 text-sm text-gray-700 leading-relaxed">
-                    {item.label}
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-3 h-3 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: item.color }}
+                      />
+                      {item.label}
+                    </div>
                   </td>
                   <td className="py-2.5 px-4 text-right text-sm font-semibold text-gray-900 tabular-nums">
                     {formatCurrency(item.value)}
