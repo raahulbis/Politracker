@@ -64,3 +64,4 @@ scripts/import-votes-from-sql.ts
 # database dumps (can be large, share separately if needed)
 /data/*.sql
 /data/politracker-dump-*.sql
+RAILWAY_CACHE_CLEAR.md
