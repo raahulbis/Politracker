@@ -19,3 +19,4 @@ These scripts are kept for reference only and are no longer needed for normal op
 
 The application now uses **PostgreSQL** exclusively. See `README_DATABASE.md` for current setup instructions.
 
+

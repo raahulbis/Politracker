@@ -244,6 +244,7 @@ export async function getMPVotingRecord(mpId: string, mpName: string, dbMPId?: n
         -- Bill data from master table (preferred)
         b.id as bill_id,
         b.bill_number as bill_bill_number,
+        b.motion_number as bill_motion_number,
         b.title as bill_title,
         b.legisinfo_id as bill_legisinfo_id,
         b.status_code as bill_status_code,
@@ -254,6 +255,7 @@ export async function getMPVotingRecord(mpId: string, mpName: string, dbMPId?: n
         -- Fallback to denormalized data if bill not found
         COALESCE(b.title, v.bill_title) as final_bill_title,
         COALESCE(b.bill_number, v.bill_number) as final_bill_number,
+        COALESCE(b.motion_number, NULL) as final_motion_number,
         -- Get sponsor party from bill (prefer b.sponsor_party, then lookup from MP, then from vote)
         COALESCE(
           b.sponsor_party,
@@ -286,6 +288,7 @@ export async function getMPVotingRecord(mpId: string, mpName: string, dbMPId?: n
         -- Bill data from master table (preferred)
         b.id as bill_id,
         b.bill_number as bill_bill_number,
+        b.motion_number as bill_motion_number,
         b.title as bill_title,
         b.legisinfo_id as bill_legisinfo_id,
         b.status_code as bill_status_code,
@@ -296,6 +299,7 @@ export async function getMPVotingRecord(mpId: string, mpName: string, dbMPId?: n
         -- Fallback to denormalized data if bill not found
         COALESCE(b.title, v.bill_title) as final_bill_title,
         COALESCE(b.bill_number, v.bill_number) as final_bill_number,
+        COALESCE(b.motion_number, NULL) as final_motion_number,
         -- Get sponsor party from bill (prefer b.sponsor_party, then lookup from MP, then from vote)
         COALESCE(
           b.sponsor_party,
@@ -326,6 +330,7 @@ export async function getMPVotingRecord(mpId: string, mpName: string, dbMPId?: n
       bill_number: v.final_bill_number || v.bill_number,
       bill_title: v.final_bill_title || v.bill_title,
       motion_title: v.motion_title,
+      motion_number: v.final_motion_number || undefined,
       vote_type: v.vote_type as 'Yea' | 'Nay' | 'Paired' | 'Abstained' | 'Not Voting',
       result: v.result as 'Agreed To' | 'Negatived' | 'Tie',
       party_position: v.party_position as 'For' | 'Against' | 'Free Vote' | undefined,

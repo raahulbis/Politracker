@@ -70,3 +70,4 @@ This will show detailed connection info and help confirm if the public URL works
 2. **Then investigate Solution 2** (verify same project) - for long-term fix
 3. **If still not working**, try Solution 3 (re-link service)
 
+

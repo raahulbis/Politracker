@@ -88,3 +88,4 @@ function calculateAllMPSalaries() {
 // Run the script
 calculateAllMPSalaries();
 
+

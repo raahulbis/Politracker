@@ -105,21 +105,21 @@ export default function MPProfile({
             )}
             
             <div className="flex-1 min-w-0 text-center lg:text-left">
-              <div className="flex items-center gap-2.5 justify-center lg:justify-start mb-1">
-                <h1 className="text-3xl font-semibold text-gray-900 break-words leading-tight">
-                  {mp.name}
-                </h1>
-                {partyLogo && (
-                  <img
-                    src={partyLogo}
-                    alt={mp.party_name || 'Party logo'}
-                    className="h-5 w-auto flex-shrink-0"
-                  />
-                )}
-              </div>
+              <h1 className="text-3xl font-semibold text-gray-900 break-words leading-tight mb-1">
+                {mp.name}
+              </h1>
               <p className="text-base text-gray-600 break-words leading-relaxed">
                 {mp.district_name}
               </p>
+              {partyLogo && (
+                <div className="mt-1 mb-1">
+                  <img
+                    src={partyLogo}
+                    alt={mp.party_name || 'Party logo'}
+                    className="h-5 w-auto inline-block"
+                  />
+                </div>
+              )}
               {mp.parliamentary_positions && mp.parliamentary_positions.length > 0 && (
                 <div className="mt-1">
                   {mp.parliamentary_positions

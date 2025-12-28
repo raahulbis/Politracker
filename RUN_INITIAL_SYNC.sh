@@ -14,3 +14,4 @@ npm run db:sync-latest-votes
 echo ""
 echo "Initial sync complete!"
 
+

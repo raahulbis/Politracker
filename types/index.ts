@@ -65,6 +65,7 @@ export interface Vote {
   bill_number?: string;
   bill_title?: string;
   motion_title: string;
+  motion_number?: string;
   vote_type: 'Yea' | 'Nay' | 'Paired' | 'Abstained' | 'Not Voting';
   result: 'Agreed To' | 'Negatived' | 'Tie';
   party_position?: 'For' | 'Against' | 'Free Vote'; // Legacy field, kept for backward compatibility

@@ -72,3 +72,4 @@ async function testMPVotes(mpName: string) {
 const mpName = process.argv[2] || 'Etobicoke Centre';
 testMPVotes(mpName);
 
+
