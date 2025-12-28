@@ -374,7 +374,6 @@ export default function BillPage() {
                           const partyColors = getPartyColors(bill.sponsor_party);
                           return (
                             <span 
-                              className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium"
                               className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium text-gray-800 dark:text-white"
                               style={{
                                 backgroundColor: `${partyColors.primary}30`,
