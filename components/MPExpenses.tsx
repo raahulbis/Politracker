@@ -204,7 +204,7 @@ export default function MPExpenses({ expenses, partyColors }: MPExpensesProps) {
             </div>
           ))}
           {/* Total */}
-          <div className="pt-4 mt-4 border-t border-gray-200">
+          <div className="pt-4 mt-4 border-t border-gray-100 dark:border-slate-700">
             <div className="flex items-center justify-between">
               <span className="text-base font-semibold text-gray-900">Total Expenses</span>
               <span className="text-base font-semibold text-gray-900 tabular-nums">
@@ -215,10 +215,10 @@ export default function MPExpenses({ expenses, partyColors }: MPExpensesProps) {
         </div>
       ) : (
         /* Table View */
-        <div className="border border-gray-200 rounded overflow-hidden">
+        <div className="border border-gray-100 dark:border-slate-700 rounded-xl overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
+              <tr className="bg-gray-50 dark:bg-slate-800/50 border-b border-gray-100 dark:border-slate-700">
                 <th className="text-left py-2.5 px-4 text-sm font-semibold text-gray-700">Category</th>
                 <th className="text-right py-2.5 px-4 text-sm font-semibold text-gray-700">Amount</th>
                 <th className="text-right py-2.5 px-4 text-sm font-semibold text-gray-700">% of Total</th>
@@ -228,7 +228,7 @@ export default function MPExpenses({ expenses, partyColors }: MPExpensesProps) {
               {expenseItemsWithPercentage.map((item, index) => (
                 <tr
                   key={item.label}
-                  className="border-b border-gray-200 transition-colors"
+                  className="border-b border-gray-100 dark:border-slate-700 transition-colors"
                   style={{
                     backgroundColor: index % 2 === 0 ? 'white' : item.colorLight,
                   }}

@@ -183,7 +183,7 @@ export default function MPProfile({
 
         {/* Contact Information - Quiet styling */}
         {(mp.email || mp.phone || mp.url) && (
-          <div className="mt-6 pt-6 border-t border-gray-200">
+          <div className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-700">
             <div className="flex flex-wrap items-center gap-4 sm:gap-5 text-sm">
               {/* Primary: Website */}
               {mp.url && (

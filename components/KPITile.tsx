@@ -14,7 +14,7 @@ export default function KPITile({ label, value, timeframe, tooltip }: KPITilePro
 
   return (
     <div className="group relative h-full">
-      <div className="bg-white rounded-lg border border-gray-200 p-4 hover:border-gray-300 transition-colors h-full min-h-[100px] flex flex-col">
+      <div className="card h-full min-h-[100px] flex flex-col">
         <div className="text-xs text-gray-500 uppercase tracking-wide mb-1.5">
           {label}
         </div>

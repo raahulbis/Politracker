@@ -160,9 +160,9 @@ export default function MPPage() {
   const partyColors = getPartyColors(mp.party_name);
 
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-slate-900">
+    <main className="min-h-screen bg-[#f7f7f7] dark:bg-slate-900">
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
-        <div className="max-w-7xl mx-auto space-y-5">
+        <div className="max-w-7xl mx-auto space-y-6">
           <MPProfile 
             mp={mp} 
             partyColors={partyColors}

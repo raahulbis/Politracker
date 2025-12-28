@@ -62,7 +62,7 @@ export default function MPCommittees({ committees, partyColors }: MPCommitteesPr
           return (
             <div
               key={committeeName}
-              className="border border-gray-200 rounded p-4 hover:border-gray-300 transition-colors"
+              className="border border-gray-100 dark:border-slate-700 rounded-xl p-4 hover:border-gray-200 dark:hover:border-slate-600 transition-colors"
             >
               <h3 className="text-base font-semibold text-gray-900 mb-3 leading-relaxed">
                 {committeeName}

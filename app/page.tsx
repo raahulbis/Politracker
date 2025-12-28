@@ -169,15 +169,17 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-slate-900">
+    <main className="min-h-screen bg-[#f7f7f7] dark:bg-slate-900">
+      {/* Canadian signature - red rule at top */}
+      <div className="h-[3px] bg-[#D80621]"></div>
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
-        <div className="max-w-7xl mx-auto space-y-5 sm:space-y-6">
+        <div className="max-w-7xl mx-auto space-y-6 sm:space-y-7">
           <div className="flex justify-end mb-4">
             <ThemeToggle />
           </div>
           
           <div className="text-center mb-12">
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-3">
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-3">
               PoliTracker
             </h1>
             <p className="text-lg sm:text-xl text-gray-700 dark:text-gray-300 mb-8">
@@ -200,7 +202,7 @@ export default function Home() {
           </div>
 
           {!loadingStats && stats && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <StatsCard
                 title="MPs per Party"
                 content={
@@ -228,7 +230,7 @@ export default function Home() {
                           >
                             {party.party_name}
                           </span>
-                          <span className="relative text-sm font-semibold text-gray-900 dark:text-gray-100 z-10">
+                          <span className="relative text-sm font-semibold text-gray-800 dark:text-gray-100 z-10">
                             {party.count}
                           </span>
                         </div>
@@ -275,7 +277,7 @@ export default function Home() {
                             {party.party_name}
                           </span>
                           <span 
-                            className="relative text-sm font-semibold text-gray-900 dark:text-gray-100 z-10 cursor-help"
+                            className="relative text-sm font-semibold text-gray-800 dark:text-gray-100 z-10 cursor-help"
                             title={full}
                           >
                             {display}
@@ -287,13 +289,13 @@ export default function Home() {
                       <>
                         <div className="border-t border-gray-300 dark:border-slate-600 my-2"></div>
                         <div className="flex justify-between items-center pt-1.5 px-2 -mx-2 rounded bg-gray-50 dark:bg-slate-700/50">
-                          <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Total Expenses (All Parties)</span>
+                          <span className="text-sm font-semibold text-gray-800 dark:text-gray-100">Total Expenses (All Parties)</span>
                           {(() => {
                             const total = stats.expensesByParty.reduce((sum, party) => sum + party.total_expenses, 0);
                             const { display, full } = formatCurrencyAbbreviated(total);
                             return (
                               <span 
-                                className="text-sm font-bold text-gray-900 dark:text-gray-100 cursor-help"
+                                className="text-sm font-bold text-gray-800 dark:text-gray-100 cursor-help"
                                 title={full}
                               >
                                 {display}
@@ -335,7 +337,7 @@ export default function Home() {
                             {party.party_name}
                           </span>
                           <span 
-                            className="relative text-sm font-semibold text-gray-900 dark:text-gray-100 z-10 cursor-help"
+                            className="relative text-sm font-semibold text-gray-800 dark:text-gray-100 z-10 cursor-help"
                             title={full}
                           >
                             {display}
@@ -347,13 +349,13 @@ export default function Home() {
                       <>
                         <div className="border-t border-gray-300 dark:border-slate-600 my-2"></div>
                         <div className="flex justify-between items-center pt-1.5 px-2 -mx-2 rounded bg-gray-50 dark:bg-slate-700/50">
-                          <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Total Salaries (All Parties)</span>
+                          <span className="text-sm font-semibold text-gray-800 dark:text-gray-100">Total Salaries (All Parties)</span>
                           {(() => {
                             const total = stats.salariesByParty.reduce((sum, party) => sum + party.total_salary, 0);
                             const { display, full } = formatCurrencyAbbreviated(total);
                             return (
                               <span 
-                                className="text-sm font-bold text-gray-900 dark:text-gray-100 cursor-help"
+                                className="text-sm font-bold text-gray-800 dark:text-gray-100 cursor-help"
                                 title={full}
                               >
                                 {display}
@@ -373,18 +375,18 @@ export default function Home() {
             <div className="card">
               {/* Bills This Session Stats */}
               <div className="mb-8">
-                <h3 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                <h3 className="text-[15px] font-semibold text-gray-800 dark:text-gray-100 mb-2">
                   Bills This Session
                 </h3>
                 <BillStatsContent stats={stats.billStats} />
               </div>
 
               {/* Divider */}
-              <div className="border-t border-gray-200 dark:border-slate-700 my-8"></div>
+              <div className="border-t border-gray-100 dark:border-slate-700 my-8"></div>
 
               {/* Recent Activity */}
               <div>
-                <h3 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100 mb-6">
+                <h3 className="text-[15px] font-semibold text-gray-800 dark:text-gray-100 mb-6">
                   Recent Activity
                 </h3>
                 <RecentBillsContent bills={stats.recentBills} />
@@ -393,7 +395,7 @@ export default function Home() {
           )}
 
           {loadingStats && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3, 4, 5, 6].map((i) => (
                 <div key={i} className="card">
                   <div className="animate-pulse">
@@ -412,7 +414,7 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 mt-12">
+      <footer className="border-t border-gray-100 dark:border-slate-700 bg-[#f7f7f7] dark:bg-slate-800 mt-12">
         <div className="container mx-auto px-3 sm:px-4 py-6">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -446,8 +448,8 @@ export default function Home() {
 
 function FeatureCard({ title, description }: { title: string; description: string }) {
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-gray-200 dark:border-slate-700 p-6">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+    <div className="card">
+      <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
         {title}
       </h3>
       <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -460,7 +462,7 @@ function FeatureCard({ title, description }: { title: string; description: strin
 function StatsCard({ title, content }: { title: string | React.ReactNode; content: React.ReactNode }) {
   return (
     <div className="card">
-      <h3 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100 mb-6">
+      <h3 className="text-[15px] font-semibold text-gray-800 dark:text-gray-100 mb-6">
         {title}
       </h3>
       {content}
@@ -519,11 +521,11 @@ function BiggestSpenderContent({
     <div className="space-y-2">
       <div className="flex justify-between items-center">
         <span className="text-sm text-gray-700 dark:text-gray-300">Name</span>
-        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{spender.name}</span>
+        <span className="text-sm font-semibold text-gray-800 dark:text-gray-100">{spender.name}</span>
       </div>
       <div className="flex justify-between items-center">
         <span className="text-sm text-gray-700 dark:text-gray-300">District</span>
-        <span className="text-sm text-gray-900 dark:text-gray-100">{spender.district_name}</span>
+        <span className="text-sm text-gray-800 dark:text-gray-100">{spender.district_name}</span>
       </div>
       {spender.party_name && (
         <div className="flex justify-between items-center">
@@ -539,9 +541,9 @@ function BiggestSpenderContent({
           </span>
         </div>
       )}
-      <div className="flex justify-between items-center pt-2 border-t border-gray-200 dark:border-slate-700">
+      <div className="flex justify-between items-center pt-2 border-t border-gray-100 dark:border-slate-700">
         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Total Expenses</span>
-        <span className="text-sm font-bold text-gray-900 dark:text-gray-100">
+        <span className="text-sm font-bold text-gray-800 dark:text-gray-100">
           {new Intl.NumberFormat('en-CA', {
             style: 'currency',
             currency: 'CAD',
@@ -571,11 +573,11 @@ function HighestPaidContent({
     <div className="space-y-2">
       <div className="flex justify-between items-center">
         <span className="text-sm text-gray-700 dark:text-gray-300">Name</span>
-        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{mp.name}</span>
+        <span className="text-sm font-semibold text-gray-800 dark:text-gray-100">{mp.name}</span>
       </div>
       <div className="flex justify-between items-center">
         <span className="text-sm text-gray-700 dark:text-gray-300">District</span>
-        <span className="text-sm text-gray-900 dark:text-gray-100">{mp.district_name}</span>
+        <span className="text-sm text-gray-800 dark:text-gray-100">{mp.district_name}</span>
       </div>
       {mp.party_name && (
         <div className="flex justify-between items-center">
@@ -591,9 +593,9 @@ function HighestPaidContent({
           </span>
         </div>
       )}
-        <div className="flex justify-between items-center pt-2 border-t border-gray-200 dark:border-slate-700">
+        <div className="flex justify-between items-center pt-2 border-t border-gray-100 dark:border-slate-700">
         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Salary</span>
-        <span className="text-sm font-bold text-gray-900 dark:text-gray-100">
+        <span className="text-sm font-bold text-gray-800 dark:text-gray-100">
           {new Intl.NumberFormat('en-CA', {
             style: 'currency',
             currency: 'CAD',
@@ -638,9 +640,9 @@ function BillStatsContent({
   return (
     <div className="space-y-3">
       {/* Big number */}
-      <div>
-        <div className="text-[28px] font-bold text-gray-900 dark:text-gray-100">{stats.total_bills}</div>
-      </div>
+        <div>
+          <div className="text-[28px] font-bold text-gray-800 dark:text-gray-100">{stats.total_bills}</div>
+        </div>
       
       {/* Stacked bar */}
       <div className="space-y-3">
@@ -703,7 +705,7 @@ function BillStatsContent({
                   </span>
                 </span>
               </div>
-              <span className="text-gray-900 dark:text-gray-100 font-medium text-right">{stats.outside_order_precedence}</span>
+              <span className="text-gray-800 dark:text-gray-100 font-medium text-right">{stats.outside_order_precedence}</span>
               <span className="text-gray-500 dark:text-gray-400 text-right w-12">{outsideOrderPrecedencePercentage.toFixed(1)}%</span>
             </div>
           )}
@@ -715,7 +717,7 @@ function BillStatsContent({
                 <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: '#2563EB' }}></div>
                 <span className="text-gray-700 dark:text-gray-300">At House</span>
               </div>
-              <span className="text-gray-900 dark:text-gray-100 font-medium text-right">{stats.at_house}</span>
+              <span className="text-gray-800 dark:text-gray-100 font-medium text-right">{stats.at_house}</span>
               <span className="text-gray-500 dark:text-gray-400 text-right w-12">{atHousePercentage.toFixed(1)}%</span>
             </div>
           )}
@@ -727,7 +729,7 @@ function BillStatsContent({
                 <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: '#7C3AED' }}></div>
                 <span className="text-gray-700 dark:text-gray-300">At Senate</span>
               </div>
-              <span className="text-gray-900 dark:text-gray-100 font-medium text-right">{stats.at_senate}</span>
+              <span className="text-gray-800 dark:text-gray-100 font-medium text-right">{stats.at_senate}</span>
               <span className="text-gray-500 dark:text-gray-400 text-right w-12">{atSenatePercentage.toFixed(1)}%</span>
             </div>
           )}
@@ -739,7 +741,7 @@ function BillStatsContent({
                 <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: '#16A34A' }}></div>
                 <span className="text-gray-700 dark:text-gray-300">Became law</span>
               </div>
-              <span className="text-gray-900 dark:text-gray-100 font-medium text-right">{stats.law_bills}</span>
+              <span className="text-gray-800 dark:text-gray-100 font-medium text-right">{stats.law_bills}</span>
               <span className="text-gray-500 dark:text-gray-400 text-right w-12">{lawPercentage.toFixed(1)}%</span>
             </div>
           )}
@@ -751,7 +753,7 @@ function BillStatsContent({
                 <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: '#F59E0B' }}></div>
                 <span className="text-gray-700 dark:text-gray-300">Pro Forma</span>
               </div>
-              <span className="text-gray-900 dark:text-gray-100 font-medium text-right">{stats.still_in_reading}</span>
+              <span className="text-gray-800 dark:text-gray-100 font-medium text-right">{stats.still_in_reading}</span>
               <span className="text-gray-500 dark:text-gray-400 text-right w-12">{stillInReadingPercentage.toFixed(1)}%</span>
             </div>
           )}
@@ -1094,7 +1096,7 @@ function RecentBillsContent({
             return (
               <div 
                 key={`${bill.bill_number}-${bill.introduced_date}`}
-                className="py-3 px-4 -mx-4 border-b border-gray-200 dark:border-slate-700 last:border-b-0 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors group"
+                className="py-4 px-4 -mx-4 border-b border-gray-100 dark:border-slate-700 last:border-b-0 cursor-pointer hover:bg-white dark:hover:bg-slate-800 hover:shadow-md hover:-translate-y-0.5 hover:rounded-lg transition-all duration-200 group"
                 onClick={(e) => {
                   // Only navigate if not clicking on the Read button
                   if (!(e.target as HTMLElement).closest('a')) {
@@ -1112,16 +1114,16 @@ function RecentBillsContent({
               >
                 {/* Line 1: Bill number + Title (1-2 lines) + Read button */}
                 <div className="flex items-start justify-between gap-4 mb-1.5">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex-shrink-0">
-                        {bill.bill_number}
-                      </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-sm font-semibold text-gray-800 dark:text-gray-100 flex-shrink-0">
+                          {bill.bill_number}
+                        </span>
+                      </div>
+                      <h3 className="text-[15px] font-medium text-gray-800 dark:text-gray-100 line-clamp-2 leading-relaxed">
+                        {bill.title}
+                      </h3>
                     </div>
-                    <h3 className="text-[15px] font-medium text-gray-900 dark:text-gray-100 line-clamp-2 leading-relaxed">
-                      {bill.title}
-                    </h3>
-                  </div>
                   {billUrl && (
                     <a
                       href={billUrl}
@@ -1182,7 +1184,7 @@ function RecentBillsContent({
 
       {/* Pagination */}
       {totalPages > 1 && (
-          <div className="mt-6 pt-4 border-t border-gray-200 dark:border-slate-700">
+          <div className="mt-6 pt-4 border-t border-gray-100 dark:border-slate-700">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               {/* Left: Page info */}
               <div className="text-sm text-gray-600 dark:text-gray-400">

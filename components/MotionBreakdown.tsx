@@ -72,10 +72,10 @@ export default function MotionBreakdown({ motions, partyColors }: MotionBreakdow
             const badgeLabel = getBadgeLabel(motion);
             
             return (
-              <div
-                key={motion.id}
-                className="border-b border-gray-200 last:border-b-0"
-              >
+                <div
+                  key={motion.id}
+                  className="border-b border-gray-100 dark:border-slate-700 last:border-b-0"
+                >
                 <div className="py-4">
                   {/* Main Row */}
                   <div className="flex items-start justify-between gap-4">

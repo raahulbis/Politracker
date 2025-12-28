@@ -148,7 +148,7 @@ export default function PartyLoyaltyStats({ stats, partyColors, votes = [] }: Pa
 
       {/* Collapsible Sponsor Party Breakdown Table */}
       {totalBillVotes > 0 && (
-        <div className="mt-6 pt-6 border-t border-gray-200">
+        <div className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-700">
             <button
               onClick={() => setIsTableExpanded(!isTableExpanded)}
               className="w-full flex items-center justify-between text-left text-sm font-semibold text-gray-900 hover:text-gray-700 transition-colors"
@@ -176,7 +176,7 @@ export default function PartyLoyaltyStats({ stats, partyColors, votes = [] }: Pa
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="border-b border-gray-200">
+                          <tr className="border-b border-gray-100 dark:border-slate-700">
                             <th className="text-left py-2 px-2 font-semibold text-gray-700">Party</th>
                             <th className="text-right py-2 px-2 font-semibold text-gray-700">Yea</th>
                             <th className="text-right py-2 px-2 font-semibold text-gray-700">Nay</th>

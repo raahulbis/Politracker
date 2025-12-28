@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import type { VotingRecord } from '@/types';
 import type { PartyColors } from '@/lib/utils/party-colors';
 
@@ -24,6 +25,7 @@ interface GroupedBill {
 }
 
 export default function VotingHistory({ votingRecord, partyColors }: VotingHistoryProps) {
+  const router = useRouter();
   const { votes, total_votes } = votingRecord;
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedBills, setExpandedBills] = useState<Set<string>>(new Set());
@@ -156,16 +158,16 @@ export default function VotingHistory({ votingRecord, partyColors }: VotingHisto
 
   return (
     <div className="card" id="voting-history">
-      <h2 className="text-lg font-semibold text-gray-900 mb-6">
+      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-6">
         Voting History
       </h2>
 
       {total_votes === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500">
+          <p className="text-gray-500 dark:text-gray-400">
             No voting records available at this time.
           </p>
-          <p className="text-sm text-gray-400 mt-2">
+          <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
             This may be due to API limitations or the MP being newly elected.
           </p>
         </div>
@@ -200,7 +202,7 @@ export default function VotingHistory({ votingRecord, partyColors }: VotingHisto
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
                   }}
-                  className={`w-full pl-11 ${searchQuery ? 'pr-8' : 'pr-4'} py-1.5 rounded-full text-sm focus:outline-none bg-white text-gray-900 border transition-all duration-200 border-gray-300 focus:border-gray-300 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:border-blue-500`}
+                  className={`w-full pl-11 ${searchQuery ? 'pr-8' : 'pr-4'} py-1.5 rounded-full text-sm focus:outline-none bg-white dark:bg-slate-700 text-gray-800 dark:text-gray-100 border transition-all duration-200 border-gray-300 dark:border-slate-600 focus:border-gray-300 dark:focus:border-slate-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-slate-800 focus:border-blue-500 dark:focus:border-blue-400`}
                 />
                 {searchQuery && (
                   <button
@@ -219,15 +221,15 @@ export default function VotingHistory({ votingRecord, partyColors }: VotingHisto
             </div>
 
             {/* Results count */}
-            <div className="mt-3 text-sm text-gray-600">
+            <div className="mt-3 text-sm text-gray-600 dark:text-gray-400">
               Showing {filteredVotes.length} of {total_votes} votes
             </div>
           </div>
 
           {/* Grouped Bills */}
-          <div className="space-y-6 border-t border-gray-200 pt-6">
+          <div className="space-y-0 border-t border-gray-100 dark:border-slate-700 pt-0">
             {groupedBills.length === 0 ? (
-              <div className="py-12 text-center text-gray-500">
+              <div className="py-12 text-center text-gray-500 dark:text-gray-400">
                 No votes match your search.
               </div>
             ) : (
@@ -237,104 +239,158 @@ export default function VotingHistory({ votingRecord, partyColors }: VotingHisto
                 const latestVote = bill.votes[0];
                 const pastVotes = bill.votes.slice(1);
 
+                // Format date
+                const formatDate = (dateString: string) => {
+                  const date = new Date(dateString);
+                  return date.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                  });
+                };
+
+                // Determine status icon
+                const isSupported = latestVote.result === 'Agreed To';
+
                 return (
-                  <div key={bill.bill_number} className="border-b border-gray-200 last:border-b-0 pb-6 last:pb-0">
-                    {/* 1. Bill icon + Bill number + Category pill */}
-                    <div className="flex items-center gap-2 mb-2">
-                      <svg
-                        className="w-5 h-5 text-gray-600 flex-shrink-0"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                        />
-                      </svg>
-                      <span className="text-lg font-semibold text-gray-900">
-                        {bill.bill_number}
-                      </span>
-                      {bill.category && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300">
-                          {bill.category}
-                        </span>
-                      )}
-                    </div>
+                  <div 
+                    key={bill.bill_number} 
+                    className="border-b border-gray-100 dark:border-slate-700 last:border-b-0 py-4 cursor-pointer hover:bg-white dark:hover:bg-slate-800 hover:shadow-md hover:-translate-y-0.5 hover:rounded-lg transition-all duration-200 -mx-6 px-6"
+                    onClick={(e) => {
+                      // Only navigate if not clicking on the expand button or its children
+                      if (!(e.target as HTMLElement).closest('button')) {
+                        router.push(`/bill/${encodeURIComponent(bill.bill_number)}`);
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if ((e.key === 'Enter' || e.key === ' ') && !(e.target as HTMLElement).closest('button')) {
+                        e.preventDefault();
+                        router.push(`/bill/${encodeURIComponent(bill.bill_number)}`);
+                      }
+                    }}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <div className="flex items-start gap-4">
+                      {/* Status indicator - larger and more prominent */}
+                      <div className="flex-shrink-0 mt-0.5">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                          isSupported 
+                            ? 'bg-green-100 dark:bg-green-900/30' 
+                            : 'bg-red-100 dark:bg-red-900/30'
+                        }`}>
+                          {isSupported ? (
+                            <svg className="w-4 h-4 text-green-600 dark:text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                          ) : (
+                            <svg className="w-4 h-4 text-red-600 dark:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          )}
+                        </div>
+                      </div>
 
-                    {/* 2. Bill Title */}
-                    <h3 className="text-base font-medium text-gray-900 leading-relaxed mb-3">
-                      {bill.bill_title}
-                    </h3>
-
-                    {/* 3. Last vote details + Status pill */}
-                    <div className="flex items-start justify-between gap-4 mb-2">
+                      {/* Content */}
                       <div className="flex-1 min-w-0">
-                        {latestVote.motion_number && (
-                          <span className="text-sm text-gray-600 mr-2">
-                            Motion {latestVote.motion_number}
+                        {/* Bill number, date, and category */}
+                        <div className="flex items-center gap-3 mb-1.5 flex-wrap">
+                          <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+                            {bill.bill_number}
                           </span>
-                        )}
-                        <span className="text-sm text-gray-600">
-                          {latestVote.motion_title}
-                        </span>
-                      </div>
-                      {/* Result pill */}
-                      <span 
-                        className={`px-2.5 py-0.5 rounded-full text-xs font-medium border flex-shrink-0 ${getResultBadgeColor(latestVote.result)}`}
-                      >
-                        {getResultLabel(latestVote.result)}
-                      </span>
-                    </div>
-
-                    {/* 4. Past votes expand button (only if multiple votes) */}
-                    {hasMultipleVotes && (
-                      <button
-                        onClick={() => toggleBillExpansion(bill.bill_number)}
-                        className="text-sm font-medium text-gray-600 hover:text-gray-900 hover:underline transition-colors flex items-center gap-1"
-                      >
-                        {isExpanded ? 'Hide' : 'Show'} past votes ({pastVotes.length})
-                        <svg
-                          className={`w-4 h-4 transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </button>
-                    )}
-
-                    {/* Past votes subsection (only if multiple votes and expanded) */}
-                    {hasMultipleVotes && isExpanded && (
-                      <div className="mt-4 ml-7 space-y-3 border-l-2 border-gray-200 pl-4">
-                        {pastVotes.map((vote) => (
-                          <div
-                            key={vote.id}
-                            className="flex items-start justify-between gap-4 py-2"
-                          >
-                            <div className="flex-1 min-w-0">
-                              {vote.motion_number && (
-                                <span className="text-sm text-gray-600 mr-2">
-                                  Motion {vote.motion_number}
-                                </span>
-                              )}
-                              <span className="text-sm text-gray-600">
-                                {vote.motion_title}
-                              </span>
-                            </div>
-                            {/* Result pill */}
-                            <span 
-                              className={`px-2.5 py-0.5 rounded-full text-xs font-medium border flex-shrink-0 ${getResultBadgeColor(vote.result)}`}
-                            >
-                              {getResultLabel(vote.result)}
+                          <span className="text-sm text-gray-500 dark:text-gray-400">
+                            {formatDate(latestVote.date)}
+                          </span>
+                          {bill.category && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300">
+                              {bill.category}
                             </span>
+                          )}
+                        </div>
+
+                        {/* Bill Title */}
+                        <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100 leading-relaxed mb-1.5">
+                          {bill.bill_title}
+                        </h3>
+
+                        {/* Motion details */}
+                        <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                          {latestVote.motion_number && (
+                            <span className="mr-2">
+                              Motion {latestVote.motion_number}
+                            </span>
+                          )}
+                          <span>{latestVote.motion_title}</span>
+                        </div>
+
+                        {/* Past votes expand button (only if multiple votes) */}
+                        {hasMultipleVotes && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleBillExpansion(bill.bill_number);
+                            }}
+                            className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:underline transition-colors flex items-center gap-1.5"
+                          >
+                            {isExpanded ? 'Hide' : 'Show'} past votes ({pastVotes.length})
+                            <svg
+                              className={`w-4 h-4 transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+                        )}
+
+                        {/* Past votes subsection (only if multiple votes and expanded) */}
+                        {hasMultipleVotes && isExpanded && (
+                          <div className="mt-4 ml-6 space-y-4 border-l-2 border-gray-100 dark:border-slate-700 pl-4">
+                            {pastVotes.map((vote) => {
+                              const voteIsSupported = vote.result === 'Agreed To';
+
+                              return (
+                                <div key={vote.id} className="flex items-start gap-3">
+                                  <div className="flex-shrink-0 mt-0.5">
+                                    <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
+                                      voteIsSupported 
+                                        ? 'bg-green-100 dark:bg-green-900/30' 
+                                        : 'bg-red-100 dark:bg-red-900/30'
+                                    }`}>
+                                      {voteIsSupported ? (
+                                        <svg className="w-3 h-3 text-green-600 dark:text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                      ) : (
+                                        <svg className="w-3 h-3 text-red-600 dark:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                                        {formatDate(vote.date)}
+                                      </span>
+                                    </div>
+                                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                                      {vote.motion_number && (
+                                        <span className="mr-2">
+                                          Motion {vote.motion_number}
+                                        </span>
+                                      )}
+                                      <span>{vote.motion_title}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
                           </div>
-                        ))}
+                        )}
                       </div>
-                    )}
+                    </div>
                   </div>
                 );
               })
