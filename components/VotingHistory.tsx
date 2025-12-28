@@ -202,14 +202,14 @@ export default function VotingHistory({ votingRecord, partyColors }: VotingHisto
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
                   }}
-                  className={`w-full pl-11 ${searchQuery ? 'pr-8' : 'pr-4'} py-1.5 rounded-full text-sm focus:outline-none bg-white dark:bg-slate-700 text-gray-800 dark:text-gray-100 border transition-all duration-200 border-gray-300 dark:border-slate-600 focus:border-gray-300 dark:focus:border-slate-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-slate-800 focus:border-blue-500 dark:focus:border-blue-400`}
+                  className={`w-full pl-11 ${searchQuery ? 'pr-8' : 'pr-4'} py-1.5 rounded-full text-sm focus:outline-none bg-white dark:bg-[#0B0F14] text-gray-800 dark:text-gray-100 border transition-all duration-200 border-gray-300 dark:border-slate-600 focus:border-gray-300 dark:focus:border-slate-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-[#0B0F14] focus:border-blue-500 dark:focus:border-blue-400`}
                 />
                 {searchQuery && (
                   <button
                     onClick={() => {
                       setSearchQuery('');
                     }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none transition-colors"
                     aria-label="Clear search"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -255,7 +255,7 @@ export default function VotingHistory({ votingRecord, partyColors }: VotingHisto
                 return (
                   <div 
                     key={bill.bill_number} 
-                    className="border-b border-gray-100 dark:border-slate-700 last:border-b-0 py-4 cursor-pointer hover:bg-white dark:hover:bg-slate-800 hover:shadow-md hover:-translate-y-0.5 hover:rounded-lg transition-all duration-200 -mx-6 px-6"
+                    className="border-b border-gray-100 dark:border-slate-700 last:border-b-0 py-4 cursor-pointer hover:bg-white dark:hover:bg-[#0B0F14] hover:shadow-md hover:-translate-y-0.5 hover:rounded-lg transition-all duration-200 -mx-6 px-6"
                     onClick={(e) => {
                       // Only navigate if not clicking on the expand button or its children
                       if (!(e.target as HTMLElement).closest('button')) {

@@ -51,16 +51,16 @@ export default function MotionBreakdown({ motions, partyColors }: MotionBreakdow
 
   return (
     <div className="card">
-      <h2 className="text-lg font-semibold text-gray-900 mb-6">
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
         Motions & Bills
       </h2>
 
       {motionList.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500">
+          <p className="text-gray-500 dark:text-gray-400">
             No motion or bill data available at this time.
           </p>
-          <p className="text-sm text-gray-400 mt-2">
+          <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
             This may be due to API limitations or the MP being newly elected.
           </p>
         </div>
@@ -84,7 +84,7 @@ export default function MotionBreakdown({ motions, partyColors }: MotionBreakdow
                       <div className="flex items-start gap-3">
                         <button
                           onClick={() => toggleRow(motion.id)}
-                          className="flex-shrink-0 mt-1 text-gray-400 hover:text-gray-600 transition-colors"
+                          className="flex-shrink-0 mt-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                           aria-label={isExpanded ? 'Collapse details' : 'Expand details'}
                         >
                           <svg
@@ -99,24 +99,24 @@ export default function MotionBreakdown({ motions, partyColors }: MotionBreakdow
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
                             {billCode && (
-                              <span className="font-mono text-sm font-semibold text-gray-900">
+                              <span className="font-mono text-sm font-semibold text-gray-900 dark:text-white">
                                 {billCode}
                               </span>
                             )}
-                            <h3 className="text-base font-semibold text-gray-900 break-words leading-relaxed">
+                            <h3 className="text-base font-semibold text-gray-900 dark:text-white break-words leading-relaxed">
                               {motion.title}
                             </h3>
                           </div>
                           
                           {/* Sub-row: date + topic tags */}
-                          <div className="flex items-center gap-3 mt-2 flex-wrap text-sm text-gray-600 leading-relaxed">
+                          <div className="flex items-center gap-3 mt-2 flex-wrap text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
                             {motion.introduced_date && (
                               <span>
                                 {formatDate(motion.introduced_date)}
                               </span>
                             )}
                             {motion.category && (
-                              <span className="px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
+                              <span className="px-2 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-slate-700">
                                 {motion.category}
                               </span>
                             )}
@@ -156,20 +156,20 @@ export default function MotionBreakdown({ motions, partyColors }: MotionBreakdow
                   {isExpanded && (
                     <div className="mt-4 pl-8 space-y-3">
                       {motion.description && (
-                        <p className="text-sm text-gray-700 leading-relaxed">
+                        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                           {motion.description}
                         </p>
                       )}
                       {motion.status && (
                         <div className="flex items-start gap-2">
-                          <span className="text-sm font-medium text-gray-700">Status:</span>
-                          <span className="text-sm text-gray-600">{motion.status}</span>
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Status:</span>
+                          <span className="text-sm text-gray-600 dark:text-gray-400">{motion.status}</span>
                         </div>
                       )}
                       {motion.type && (
                         <div className="flex items-start gap-2">
-                          <span className="text-sm font-medium text-gray-700">Type:</span>
-                          <span className="text-sm text-gray-600">{motion.type}</span>
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Type:</span>
+                          <span className="text-sm text-gray-600 dark:text-gray-400">{motion.type}</span>
                         </div>
                       )}
                     </div>

@@ -169,7 +169,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-[#f7f7f7] dark:bg-slate-900">
+    <main className="min-h-screen bg-[#f7f7f7] dark:bg-[#000000]">
       {/* Canadian signature - red rule at top */}
       <div className="h-[3px] bg-[#D80621]"></div>
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
@@ -217,15 +217,14 @@ export default function Home() {
                           <div 
                             className="absolute inset-0 rounded"
                             style={{ 
-                              backgroundColor: `${partyColors.primary}10`,
+                              backgroundColor: `${partyColors.primary}20`,
                               width: `${percentage}%`,
                             }}
                           />
                           <span 
-                            className="relative inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium z-10"
+                            className="relative inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium z-10 text-gray-800 dark:text-white"
                             style={{ 
-                              backgroundColor: `${partyColors.primary}15`,
-                              color: partyColors.primary
+                              backgroundColor: `${partyColors.primary}30`,
                             }}
                           >
                             {party.party_name}
@@ -263,15 +262,14 @@ export default function Home() {
                           <div 
                             className="absolute inset-0 rounded"
                             style={{ 
-                              backgroundColor: `${partyColors.primary}10`,
+                              backgroundColor: `${partyColors.primary}20`,
                               width: `${percentage}%`,
                             }}
                           />
                           <span 
-                            className="relative inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium z-10"
+                            className="relative inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium z-10 text-gray-800 dark:text-white"
                             style={{ 
-                              backgroundColor: `${partyColors.primary}15`,
-                              color: partyColors.primary
+                              backgroundColor: `${partyColors.primary}30`,
                             }}
                           >
                             {party.party_name}
@@ -287,15 +285,15 @@ export default function Home() {
                     })}
                     {stats.expensesByParty.length > 0 && (
                       <>
-                        <div className="border-t border-gray-300 dark:border-slate-600 my-2"></div>
-                        <div className="flex justify-between items-center pt-1.5 px-2 -mx-2 rounded bg-gray-50 dark:bg-slate-700/50">
-                          <span className="text-sm font-semibold text-gray-800 dark:text-gray-100">Total Expenses (All Parties)</span>
+                        <div className="border-t border-gray-100 dark:border-slate-600 my-2"></div>
+                        <div className="flex justify-between items-center pt-1.5 px-2 -mx-2 rounded bg-gray-50 dark:bg-[#0B0F14]/50">
+                          <span className="text-sm font-semibold text-gray-800 dark:text-white">Total Expenses (All Parties)</span>
                           {(() => {
                             const total = stats.expensesByParty.reduce((sum, party) => sum + party.total_expenses, 0);
                             const { display, full } = formatCurrencyAbbreviated(total);
                             return (
                               <span 
-                                className="text-sm font-bold text-gray-800 dark:text-gray-100 cursor-help"
+                                className="text-sm font-bold text-gray-800 dark:text-white cursor-help"
                                 title={full}
                               >
                                 {display}
@@ -323,15 +321,14 @@ export default function Home() {
                           <div 
                             className="absolute inset-0 rounded"
                             style={{ 
-                              backgroundColor: `${partyColors.primary}10`,
+                              backgroundColor: `${partyColors.primary}20`,
                               width: `${percentage}%`,
                             }}
                           />
                           <span 
-                            className="relative inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium z-10"
+                            className="relative inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium z-10 text-gray-800 dark:text-white"
                             style={{ 
-                              backgroundColor: `${partyColors.primary}15`,
-                              color: partyColors.primary
+                              backgroundColor: `${partyColors.primary}30`,
                             }}
                           >
                             {party.party_name}
@@ -348,14 +345,14 @@ export default function Home() {
                     {stats.salariesByParty.length > 0 && (
                       <>
                         <div className="border-t border-gray-300 dark:border-slate-600 my-2"></div>
-                        <div className="flex justify-between items-center pt-1.5 px-2 -mx-2 rounded bg-gray-50 dark:bg-slate-700/50">
-                          <span className="text-sm font-semibold text-gray-800 dark:text-gray-100">Total Salaries (All Parties)</span>
+                        <div className="flex justify-between items-center pt-1.5 px-2 -mx-2 rounded bg-gray-50 dark:bg-[#0B0F14]/50">
+                          <span className="text-sm font-semibold text-gray-800 dark:text-white">Total Salaries (All Parties)</span>
                           {(() => {
                             const total = stats.salariesByParty.reduce((sum, party) => sum + party.total_salary, 0);
                             const { display, full } = formatCurrencyAbbreviated(total);
                             return (
                               <span 
-                                className="text-sm font-bold text-gray-800 dark:text-gray-100 cursor-help"
+                                className="text-sm font-bold text-gray-800 dark:text-white cursor-help"
                                 title={full}
                               >
                                 {display}
@@ -399,11 +396,11 @@ export default function Home() {
               {[1, 2, 3, 4, 5, 6].map((i) => (
                 <div key={i} className="card">
                   <div className="animate-pulse">
-                    <div className="h-6 bg-gray-200 dark:bg-slate-700 rounded w-1/2 mb-4"></div>
+                    <div className="h-6 bg-gray-200 dark:bg-[#0B0F14] rounded w-1/2 mb-4"></div>
                     <div className="space-y-2">
-                      <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded"></div>
-                      <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded"></div>
-                      <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-3/4"></div>
+                      <div className="h-4 bg-gray-200 dark:bg-[#0B0F14] rounded"></div>
+                      <div className="h-4 bg-gray-200 dark:bg-[#0B0F14] rounded"></div>
+                      <div className="h-4 bg-gray-200 dark:bg-[#0B0F14] rounded w-3/4"></div>
                     </div>
                   </div>
                 </div>
@@ -414,7 +411,7 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-gray-100 dark:border-slate-700 bg-[#f7f7f7] dark:bg-slate-800 mt-12">
+      <footer className="border-t border-gray-100 dark:border-slate-700 bg-[#f7f7f7] dark:bg-[#000000] mt-12">
         <div className="container mx-auto px-3 sm:px-4 py-6">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -531,10 +528,9 @@ function BiggestSpenderContent({
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-gray-300">Party</span>
           <span 
-            className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+            className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium text-gray-800 dark:text-white"
             style={{ 
-              backgroundColor: `${partyColors.primary}15`,
-              color: partyColors.primary
+              backgroundColor: `${partyColors.primary}25`,
             }}
           >
             {spender.party_name}
@@ -583,10 +579,9 @@ function HighestPaidContent({
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-gray-300">Party</span>
           <span 
-            className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+            className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium text-gray-800 dark:text-white"
             style={{ 
-              backgroundColor: `${partyColors.primary}15`,
-              color: partyColors.primary
+              backgroundColor: `${partyColors.primary}25`,
             }}
           >
             {mp.party_name}
@@ -647,7 +642,7 @@ function BillStatsContent({
       {/* Stacked bar */}
       <div className="space-y-3">
         <div className="flex-1">
-          <div className="h-8 bg-gray-200 dark:bg-slate-700 rounded overflow-hidden flex">
+          <div className="h-8 bg-gray-200 dark:bg-[#0B0F14] rounded overflow-hidden flex">
             {/* Outside Order Precedence */}
             {outsideOrderPrecedencePercentage > 0 && (
               <div 
@@ -934,7 +929,7 @@ function RecentBillsContent({
         .replace(/^./, str => str.toUpperCase());
       
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-200">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-[#0B0F14] text-gray-800 dark:text-gray-200">
           {statusText}
         </span>
       );
@@ -947,14 +942,14 @@ function RecentBillsContent({
         : bill.status;
       
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-200">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-[#0B0F14] text-gray-800 dark:text-gray-200">
           {statusText}
         </span>
       );
     }
     
     return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-400">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-[#0B0F14] text-gray-500 dark:text-gray-400">
           Unknown
         </span>
     );
@@ -979,7 +974,7 @@ function RecentBillsContent({
               setSelectedCategory(e.target.value);
               handleFilterChange();
             }}
-            className="px-3 py-1.5 border border-gray-300 dark:border-slate-600 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-slate-800 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 appearance-none cursor-pointer"
+            className="px-3 py-1.5 border border-gray-300 dark:border-slate-600 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-[#0B0F14] focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-[#0B0F14] text-gray-900 dark:text-gray-100 appearance-none cursor-pointer"
             style={{ backgroundImage: "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")", backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
           >
             <option value="all">All Categories</option>
@@ -996,7 +991,7 @@ function RecentBillsContent({
               setStatusFilter(e.target.value);
               handleFilterChange();
             }}
-            className="px-3 py-1.5 border border-gray-300 dark:border-slate-600 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-slate-800 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 appearance-none cursor-pointer"
+            className="px-3 py-1.5 border border-gray-300 dark:border-slate-600 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-[#0B0F14] focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-[#0B0F14] text-gray-900 dark:text-gray-100 appearance-none cursor-pointer"
             style={{ backgroundImage: "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")", backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
           >
             <option value="all">All Statuses</option>
@@ -1013,7 +1008,7 @@ function RecentBillsContent({
               setPartyFilter(e.target.value);
               handleFilterChange();
             }}
-            className="px-3 py-1.5 border border-gray-300 dark:border-slate-600 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-slate-800 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 appearance-none cursor-pointer"
+            className="px-3 py-1.5 border border-gray-300 dark:border-slate-600 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-[#0B0F14] focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-[#0B0F14] text-gray-900 dark:text-gray-100 appearance-none cursor-pointer"
             style={{ backgroundImage: "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")", backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
           >
             <option value="all">All Parties</option>
@@ -1049,7 +1044,7 @@ function RecentBillsContent({
                 setSearchQuery(e.target.value);
                 handleFilterChange();
               }}
-              className={`w-full pl-11 ${searchQuery ? 'pr-8' : 'pr-4'} py-1.5 rounded-full text-sm focus:outline-none bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 border transition-all duration-200 border-gray-300 dark:border-slate-600 focus:border-gray-300 dark:focus:border-slate-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-slate-800 focus:border-blue-500 dark:focus:border-blue-400`}
+              className={`w-full pl-11 ${searchQuery ? 'pr-8' : 'pr-4'} py-1.5 rounded-full text-sm focus:outline-none bg-white dark:bg-[#0B0F14] text-gray-900 dark:text-gray-100 border transition-all duration-200 border-gray-300 dark:border-slate-600 focus:border-gray-300 dark:focus:border-slate-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-[#0B0F14] focus:border-blue-500 dark:focus:border-blue-400`}
             />
             {searchQuery && (
               <button
@@ -1071,7 +1066,7 @@ function RecentBillsContent({
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
-              className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 border border-gray-300 dark:border-slate-600 rounded-full hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-slate-800"
+              className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 border border-gray-300 dark:border-slate-600 rounded-full hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-[#0B0F14]"
             >
               Clear
             </button>
@@ -1096,7 +1091,7 @@ function RecentBillsContent({
             return (
               <div 
                 key={`${bill.bill_number}-${bill.introduced_date}`}
-                className="py-4 px-4 -mx-4 border-b border-gray-100 dark:border-slate-700 last:border-b-0 cursor-pointer hover:bg-white dark:hover:bg-slate-800 hover:shadow-md hover:-translate-y-0.5 hover:rounded-lg transition-all duration-200 group"
+                className="py-4 px-4 -mx-4 border-b border-gray-100 dark:border-slate-700 last:border-b-0 cursor-pointer hover:bg-white dark:hover:bg-[#0B0F14] hover:shadow-md hover:-translate-y-0.5 hover:rounded-lg transition-all duration-200 group"
                 onClick={(e) => {
                   // Only navigate if not clicking on the Read button
                   if (!(e.target as HTMLElement).closest('a')) {
@@ -1155,10 +1150,9 @@ function RecentBillsContent({
                         const partyColors = getPartyColors(bill.sponsor_party);
                         return (
                           <span 
-                            className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                            className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium text-gray-800 dark:text-white"
                             style={{
-                              backgroundColor: `${partyColors.primary}15`,
-                              color: partyColors.primary
+                              backgroundColor: `${partyColors.primary}30`,
                             }}
                           >
                             {bill.sponsor_party}
@@ -1203,7 +1197,7 @@ function RecentBillsContent({
                     setItemsPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="px-2 py-1.5 border border-gray-300 dark:border-slate-600 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-slate-800 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 appearance-none cursor-pointer"
+                  className="px-2 py-1.5 border border-gray-300 dark:border-slate-600 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-[#0B0F14] focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-[#0B0F14] text-gray-900 dark:text-gray-100 appearance-none cursor-pointer"
                 style={{ backgroundImage: "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")", backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2rem' }}
               >
                 <option value={10}>10</option>
@@ -1217,10 +1211,10 @@ function RecentBillsContent({
               <button
                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
-                className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-slate-800 ${
+                className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-[#0B0F14] ${
                   currentPage === 1
-                    ? 'bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-50'
-                    : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600 hover:border-gray-400 dark:hover:border-slate-500'
+                    ? 'bg-gray-100 dark:bg-[#0B0F14] text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-50'
+                    : 'bg-white dark:bg-[#0B0F14] text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600 hover:border-gray-400 dark:hover:border-slate-500'
                 }`}
               >
                 Previous

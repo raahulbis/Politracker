@@ -179,9 +179,9 @@ export default function SearchForm({ onSearch, loading }: SearchFormProps) {
             onFocus={handleFocus}
             onBlur={handleBlur}
             placeholder="K1A 0A6 or MP name"
-            className={`w-full pl-14 ${query.trim() && !loading ? 'pr-28' : 'pr-5'} py-4 rounded-full focus:outline-none bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm text-gray-900 dark:text-gray-100 text-base shadow-lg border transition-all duration-200 ${
+            className={`w-full pl-14 ${query.trim() && !loading ? 'pr-28' : 'pr-5'} py-4 rounded-full focus:outline-none bg-white/80 dark:bg-[#0B0F14]/80 backdrop-blur-sm text-gray-900 dark:text-gray-100 text-base shadow-lg border transition-all duration-200 ${
               isFocused
-                ? 'shadow-xl border-gray-300/50 dark:border-slate-600/50 ring-4 ring-blue-500/10 dark:ring-blue-400/20 bg-white dark:bg-slate-700'
+                ? 'shadow-xl border-gray-300/50 dark:border-slate-600/50 ring-4 ring-blue-500/10 dark:ring-blue-400/20 bg-white dark:bg-[#0B0F14]'
                 : showError
                 ? 'border-red-200 dark:border-red-800 shadow-red-100 dark:shadow-red-900/20'
                 : 'border-gray-200/50 dark:border-slate-700/50'
@@ -220,15 +220,15 @@ export default function SearchForm({ onSearch, loading }: SearchFormProps) {
       {showSuggestions && suggestions.length > 0 && (
         <div
           ref={suggestionsRef}
-          className="absolute z-50 w-full mt-3 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border border-gray-200/50 dark:border-slate-700/50 rounded-2xl shadow-2xl max-h-80 overflow-y-auto"
+          className="absolute z-50 w-full mt-3 bg-white/95 dark:bg-[#0B0F14]/95 backdrop-blur-md border border-gray-200/50 dark:border-slate-700/50 rounded-2xl shadow-2xl max-h-80 overflow-y-auto"
         >
           {suggestions.map((suggestion, index) => (
             <button
               key={`${suggestion.type}-${suggestion.value}-${index}`}
               type="button"
               onClick={() => handleSuggestionClick(suggestion)}
-              className={`w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-slate-700 focus:bg-gray-50 dark:focus:bg-slate-700 focus:outline-none transition-colors ${
-                index === selectedIndex ? 'bg-gray-50 dark:bg-slate-700' : ''
+              className={`w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-[#0B0F14] focus:bg-gray-50 dark:focus:bg-[#0B0F14] focus:outline-none transition-colors ${
+                index === selectedIndex ? 'bg-gray-50 dark:bg-[#0B0F14]' : ''
               } ${
                 index > 0 ? 'border-t border-gray-100 dark:border-slate-700' : ''
               }`}
@@ -245,7 +245,7 @@ export default function SearchForm({ onSearch, loading }: SearchFormProps) {
                     )}
                   </div>
                   <div className="ml-3 flex-shrink-0">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-[#0B0F14] text-gray-600 dark:text-gray-300">
                       {suggestion.type === 'mp' ? 'MP' : suggestion.type === 'riding' ? 'Riding' : 'Postal'}
                     </span>
                   </div>

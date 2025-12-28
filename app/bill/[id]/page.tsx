@@ -206,7 +206,7 @@ export default function BillPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gray-50 dark:bg-slate-900">
+      <main className="min-h-screen bg-gray-50 dark:bg-[#000000]">
         <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
           <div className="max-w-7xl mx-auto">
             <div className="flex justify-end mb-4">
@@ -230,7 +230,7 @@ export default function BillPage() {
 
   if (error || !data) {
     return (
-      <main className="min-h-screen bg-gray-50 dark:bg-slate-900">
+      <main className="min-h-screen bg-gray-50 dark:bg-[#000000]">
         <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
           <div className="max-w-7xl mx-auto">
             <div className="flex justify-end mb-4">
@@ -375,9 +375,9 @@ export default function BillPage() {
                           return (
                             <span 
                               className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium"
+                              className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium text-gray-800 dark:text-white"
                               style={{
-                                backgroundColor: `${partyColors.primary}15`,
-                                color: partyColors.primary
+                                backgroundColor: `${partyColors.primary}30`,
                               }}
                             >
                               {bill.sponsor_party}
@@ -604,7 +604,7 @@ export default function BillPage() {
                                   <Link
                                     key={mp.mp_id}
                                     href={`/mp/${encodeURIComponent(mp.district_name)}`}
-                                    className="px-3 py-2 rounded border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
+                                    className="px-3 py-2 rounded border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-[#0B0F14] transition-colors flex items-center gap-2"
                                   >
                                     {mp.photo_url && (
                                       <img

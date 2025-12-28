@@ -117,20 +117,20 @@ export default function MPExpenses({ expenses, partyColors }: MPExpensesProps) {
     <div className="card">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3 flex-wrap">
-          <h2 className="text-lg font-semibold text-gray-900">Expenses</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Expenses</h2>
           {timeframePill && (
-            <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
+            <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-slate-700">
               {timeframePill}
             </span>
           )}
         </div>
-        <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+        <div className="flex items-center gap-1 bg-gray-100 dark:bg-slate-800 rounded-lg p-1">
           <button
             onClick={() => setViewMode('chart')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
               viewMode === 'chart'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-white dark:bg-[#0B0F14] text-gray-900 dark:text-white shadow-sm'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
             }`}
             title="Chart view"
           >
@@ -153,8 +153,8 @@ export default function MPExpenses({ expenses, partyColors }: MPExpensesProps) {
             onClick={() => setViewMode('table')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
               viewMode === 'table'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-white dark:bg-[#0B0F14] text-gray-900 dark:text-white shadow-sm'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
             }`}
             title="Table view"
           >
@@ -182,17 +182,17 @@ export default function MPExpenses({ expenses, partyColors }: MPExpensesProps) {
           {expenseItemsWithPercentage.map((item) => (
             <div key={item.label} className="group">
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-sm text-gray-700">{item.label}</span>
+                <span className="text-sm text-gray-700 dark:text-gray-300">{item.label}</span>
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-semibold text-gray-900 tabular-nums">
+                  <span className="text-sm font-semibold text-gray-900 dark:text-white tabular-nums">
                     {formatCurrency(item.value)}
                   </span>
-                  <span className="text-xs text-gray-500 tabular-nums">
+                  <span className="text-xs text-gray-500 dark:text-gray-400 tabular-nums">
                     {item.percentage.toFixed(1)}%
                   </span>
                 </div>
               </div>
-              <div className="h-8 bg-gray-100 rounded overflow-hidden">
+              <div className="h-8 bg-gray-100 dark:bg-slate-800 rounded overflow-hidden">
                 <div
                   className="h-full transition-all rounded"
                   style={{
@@ -206,8 +206,8 @@ export default function MPExpenses({ expenses, partyColors }: MPExpensesProps) {
           {/* Total */}
           <div className="pt-4 mt-4 border-t border-gray-100 dark:border-slate-700">
             <div className="flex items-center justify-between">
-              <span className="text-base font-semibold text-gray-900">Total Expenses</span>
-              <span className="text-base font-semibold text-gray-900 tabular-nums">
+              <span className="text-base font-semibold text-gray-900 dark:text-white">Total Expenses</span>
+              <span className="text-base font-semibold text-gray-900 dark:text-white tabular-nums">
                 {formatCurrency(totalExpenses)}
               </span>
             </div>
@@ -218,28 +218,38 @@ export default function MPExpenses({ expenses, partyColors }: MPExpensesProps) {
         <div className="border border-gray-100 dark:border-slate-700 rounded-xl overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="bg-gray-50 dark:bg-slate-800/50 border-b border-gray-100 dark:border-slate-700">
-                <th className="text-left py-2.5 px-4 text-sm font-semibold text-gray-700">Category</th>
-                <th className="text-right py-2.5 px-4 text-sm font-semibold text-gray-700">Amount</th>
-                <th className="text-right py-2.5 px-4 text-sm font-semibold text-gray-700">% of Total</th>
+              <tr className="bg-gray-50 dark:bg-[#0B0F14]/50 border-b border-gray-100 dark:border-slate-700">
+                <th className="text-left py-2.5 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Category</th>
+                <th className="text-right py-2.5 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Amount</th>
+                <th className="text-right py-2.5 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">% of Total</th>
               </tr>
             </thead>
             <tbody>
-              {expenseItemsWithPercentage.map((item, index) => (
+              {expenseItemsWithPercentage.map((item, index) => {
+                const isEven = index % 2 === 0;
+                return (
                 <tr
                   key={item.label}
-                  className="border-b border-gray-100 dark:border-slate-700 transition-colors"
-                  style={{
-                    backgroundColor: index % 2 === 0 ? 'white' : item.colorLight,
-                  }}
+                  className={`border-b border-gray-100 dark:border-slate-700 transition-colors ${
+                    isEven 
+                      ? 'bg-white dark:bg-[#0B0F14] hover:bg-gray-50 dark:hover:bg-[#0F1419]' 
+                      : 'dark:bg-[#0F1419] dark:hover:bg-[#151A20]'
+                  }`}
+                  style={!isEven ? {
+                    backgroundColor: item.colorLight,
+                  } : undefined}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = item.colorLight;
+                    if (!isEven && !document.documentElement.classList.contains('dark')) {
+                      e.currentTarget.style.backgroundColor = item.colorLight;
+                    }
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = index % 2 === 0 ? 'white' : item.colorLight;
+                    if (!isEven && !document.documentElement.classList.contains('dark')) {
+                      e.currentTarget.style.backgroundColor = item.colorLight;
+                    }
                   }}
                 >
-                  <td className="py-2.5 px-4 text-sm text-gray-700 leading-relaxed">
+                  <td className="py-2.5 px-4 text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                     <div className="flex items-center gap-2">
                       <div
                         className="w-3 h-3 rounded-full flex-shrink-0"
@@ -248,17 +258,18 @@ export default function MPExpenses({ expenses, partyColors }: MPExpensesProps) {
                       {item.label}
                     </div>
                   </td>
-                  <td className="py-2.5 px-4 text-right text-sm font-semibold text-gray-900 tabular-nums">
+                  <td className="py-2.5 px-4 text-right text-sm font-semibold text-gray-900 dark:text-white tabular-nums">
                     {formatCurrency(item.value)}
                   </td>
-                  <td className="py-2.5 px-4 text-right text-sm text-gray-600 tabular-nums">
+                  <td className="py-2.5 px-4 text-right text-sm text-gray-600 dark:text-gray-400 tabular-nums">
                     {item.percentage.toFixed(1)}%
                   </td>
                 </tr>
-              ))}
-              <tr className="bg-gray-50 border-t-2 border-gray-300">
-                <td className="py-3 px-4 text-base font-semibold text-gray-900">Total Expenses</td>
-                <td className="py-3 px-4 text-right text-base font-semibold text-gray-900 tabular-nums" colSpan={2}>
+                );
+              })}
+              <tr className="bg-gray-50 dark:bg-[#0B0F14]/50 border-t-2 border-gray-300 dark:border-slate-700">
+                <td className="py-3 px-4 text-base font-semibold text-gray-900 dark:text-white">Total Expenses</td>
+                <td className="py-3 px-4 text-right text-base font-semibold text-gray-900 dark:text-white tabular-nums" colSpan={2}>
                   {formatCurrency(totalExpenses)}
                 </td>
               </tr>

@@ -83,7 +83,7 @@ export default function MPProfile({
       <div className="mb-4">
         <Link
           href="/"
-          className="text-gray-600 hover:text-gray-900 transition-colors text-sm inline-flex items-center gap-1"
+          className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors text-sm inline-flex items-center gap-1"
         >
           ← Search
         </Link>
@@ -105,10 +105,10 @@ export default function MPProfile({
             )}
             
             <div className="flex-1 min-w-0 text-center lg:text-left">
-              <h1 className="text-3xl font-semibold text-gray-900 break-words leading-tight mb-1">
+              <h1 className="text-3xl font-semibold text-gray-900 dark:text-white break-words leading-tight mb-1">
                 {mp.name}
               </h1>
-              <p className="text-base text-gray-600 break-words leading-relaxed">
+              <p className="text-base text-gray-600 dark:text-gray-300 break-words leading-relaxed">
                 {mp.district_name}
               </p>
               {partyLogo && (
@@ -125,7 +125,7 @@ export default function MPProfile({
                   {mp.parliamentary_positions
                     .filter(pos => pos.title && (!pos.to_date_time || pos.to_date_time === null))
                     .map((pos, index) => (
-                      <p key={index} className="text-sm text-gray-600 break-words leading-relaxed">
+                      <p key={index} className="text-sm text-gray-600 dark:text-gray-300 break-words leading-relaxed">
                         {pos.title}
                       </p>
                     ))}
@@ -191,7 +191,7 @@ export default function MPProfile({
                   href={mp.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-900 hover:text-gray-700 font-medium hover:underline transition-colors"
+                  className="text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300 font-medium hover:underline transition-colors"
                 >
                   Visit Website
                 </a>
@@ -200,24 +200,24 @@ export default function MPProfile({
               {/* Secondary: Email */}
               {mp.email && (
                 <div className="flex items-center gap-2 group">
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  <span className="text-gray-600 group-hover:text-gray-900 transition-colors">
+                  <span className="text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
                     {mp.email}
                   </span>
                   <button
                     onClick={handleCopyEmail}
-                    className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600 transition-all p-1 rounded hover:bg-gray-100 flex-shrink-0 ml-1"
+                    className="opacity-0 group-hover:opacity-100 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-all p-1 rounded hover:bg-gray-100 dark:hover:bg-slate-700 flex-shrink-0 ml-1"
                     title={emailCopied ? 'Copied!' : 'Copy email'}
                     aria-label="Copy email"
                   >
                     {emailCopied ? (
-                      <svg className="w-3.5 h-3.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-3.5 h-3.5 text-green-600 dark:text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     ) : (
-                      <span className="text-xs text-gray-500">Copy</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">Copy</span>
                     )}
                   </button>
                 </div>
@@ -226,24 +226,24 @@ export default function MPProfile({
               {/* Secondary: Phone */}
               {mp.phone && (
                 <div className="flex items-center gap-2 group">
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                   </svg>
-                  <span className="text-gray-600 group-hover:text-gray-900 transition-colors">
+                  <span className="text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
                     {mp.phone}
                   </span>
                   <button
                     onClick={handleCopyPhone}
-                    className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600 transition-all p-1 rounded hover:bg-gray-100 flex-shrink-0 ml-1"
+                    className="opacity-0 group-hover:opacity-100 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-all p-1 rounded hover:bg-gray-100 dark:hover:bg-slate-700 flex-shrink-0 ml-1"
                     title={phoneCopied ? 'Copied!' : 'Copy phone'}
                     aria-label="Copy phone"
                   >
                     {phoneCopied ? (
-                      <svg className="w-3.5 h-3.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-3.5 h-3.5 text-green-600 dark:text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     ) : (
-                      <span className="text-xs text-gray-500">Copy</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">Copy</span>
                     )}
                   </button>
                 </div>

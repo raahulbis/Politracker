@@ -12,8 +12,8 @@ export default function MPCommittees({ committees, partyColors }: MPCommitteesPr
   if (!committees || committees.length === 0) {
     return (
       <div className="card">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Committees</h2>
-        <p className="text-gray-600">No committee memberships found for this MP.</p>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">Committees</h2>
+        <p className="text-gray-600 dark:text-gray-300">No committee memberships found for this MP.</p>
       </div>
     );
   }
@@ -49,7 +49,7 @@ export default function MPCommittees({ committees, partyColors }: MPCommitteesPr
 
   return (
     <div className="card">
-      <h2 className="text-lg font-semibold text-gray-900 mb-6">
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
         Committees
       </h2>
       
@@ -64,7 +64,7 @@ export default function MPCommittees({ committees, partyColors }: MPCommitteesPr
               key={committeeName}
               className="border border-gray-100 dark:border-slate-700 rounded-xl p-4 hover:border-gray-200 dark:hover:border-slate-600 transition-colors"
             >
-              <h3 className="text-base font-semibold text-gray-900 mb-3 leading-relaxed">
+              <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3 leading-relaxed">
                 {committeeName}
               </h3>
               
@@ -72,20 +72,19 @@ export default function MPCommittees({ committees, partyColors }: MPCommitteesPr
                 <div className="mb-3 pb-3 border-b border-gray-100">
                   <div className="flex flex-wrap items-center gap-2 mb-2">
                     <span
-                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-gray-800 dark:text-white"
                       style={{
-                        backgroundColor: `${partyColors.primary}15`,
-                        color: partyColors.primary,
+                        backgroundColor: `${partyColors.primary}30`,
                       }}
                     >
                       {currentRole.affiliation_role_name || 'Member'}
                     </span>
-                    <span className="text-xs sm:text-sm text-gray-500">
+                    <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                       {currentRole.from_date_time ? formatDate(currentRole.from_date_time) : ''} - Present
                     </span>
                   </div>
                   {currentRole.parliament_number && (
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
                       Parliament {currentRole.parliament_number}
                       {currentRole.session_number && `, Session ${currentRole.session_number}`}
                     </p>
@@ -95,16 +94,16 @@ export default function MPCommittees({ committees, partyColors }: MPCommitteesPr
 
               {pastRoles.length > 0 && (
                 <div className="space-y-2">
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Previous Roles
                   </p>
                   {pastRoles.map((role, index) => (
-                    <div key={index} className="text-sm text-gray-600">
+                    <div key={index} className="text-sm text-gray-600 dark:text-gray-300">
                       <span className="font-medium">
                         {role.affiliation_role_name || 'Member'}
                       </span>
-                      <span className="text-gray-400 mx-2">•</span>
-                      <span className="text-gray-500">
+                      <span className="text-gray-400 dark:text-gray-500 mx-2">•</span>
+                      <span className="text-gray-500 dark:text-gray-400">
                         {formatDate(role.from_date_time)} - {formatDate(role.to_date_time)}
                       </span>
                     </div>

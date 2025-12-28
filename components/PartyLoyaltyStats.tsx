@@ -109,7 +109,7 @@ export default function PartyLoyaltyStats({ stats, partyColors, votes = [] }: Pa
 
   return (
     <div className="card">
-      <h2 className="text-lg font-semibold text-gray-900 mb-6">
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
         Party Loyalty
       </h2>
 
@@ -123,7 +123,7 @@ export default function PartyLoyaltyStats({ stats, partyColors, votes = [] }: Pa
               strokeWidth={10}
               color={partyColors.primary}
             />
-            <p className="text-base text-gray-900 leading-relaxed mt-4 text-center">
+            <p className="text-base text-gray-900 dark:text-white leading-relaxed mt-4 text-center">
               Votes with party: <span className="font-semibold">{stats.loyalty_percentage.toFixed(0)}%</span>
             </p>
           </div>
@@ -132,16 +132,16 @@ export default function PartyLoyaltyStats({ stats, partyColors, votes = [] }: Pa
         {/* Right: 3 Stat Lines */}
         <div className="flex-1 space-y-3 min-w-0">
           <div className="flex justify-between items-center">
-            <span className="text-gray-600">Party-line votes</span>
-            <span className="text-xl font-semibold text-gray-900">{stats.votes_with_party}</span>
+            <span className="text-gray-600 dark:text-gray-300">Party-line votes</span>
+            <span className="text-xl font-semibold text-gray-900 dark:text-white">{stats.votes_with_party}</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-gray-600">Breaks with party</span>
-            <span className="text-xl font-semibold text-gray-900">{stats.votes_against_party}</span>
+            <span className="text-gray-600 dark:text-gray-300">Breaks with party</span>
+            <span className="text-xl font-semibold text-gray-900 dark:text-white">{stats.votes_against_party}</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-gray-600">Independent votes</span>
-            <span className="text-xl font-semibold text-gray-900">{stats.free_votes}</span>
+            <span className="text-gray-600 dark:text-gray-300">Independent votes</span>
+            <span className="text-xl font-semibold text-gray-900 dark:text-white">{stats.free_votes}</span>
           </div>
         </div>
       </div>
@@ -151,7 +151,7 @@ export default function PartyLoyaltyStats({ stats, partyColors, votes = [] }: Pa
         <div className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-700">
             <button
               onClick={() => setIsTableExpanded(!isTableExpanded)}
-              className="w-full flex items-center justify-between text-left text-sm font-semibold text-gray-900 hover:text-gray-700 transition-colors"
+              className="w-full flex items-center justify-between text-left text-sm font-semibold text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
               style={{ color: isTableExpanded ? partyColors.primary : undefined }}
             >
               <span>Votes by sponsor party</span>
@@ -168,7 +168,7 @@ export default function PartyLoyaltyStats({ stats, partyColors, votes = [] }: Pa
             {isTableExpanded && (
               <div className="mt-4">
                 {votesWithSponsor === 0 ? (
-                  <p className="text-xs text-gray-500 italic">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 italic">
                     Sponsor party information not available for votes. Votes may need to be re-fetched to include sponsor data.
                   </p>
                 ) : (
@@ -177,10 +177,10 @@ export default function PartyLoyaltyStats({ stats, partyColors, votes = [] }: Pa
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="border-b border-gray-100 dark:border-slate-700">
-                            <th className="text-left py-2 px-2 font-semibold text-gray-700">Party</th>
-                            <th className="text-right py-2 px-2 font-semibold text-gray-700">Yea</th>
-                            <th className="text-right py-2 px-2 font-semibold text-gray-700">Nay</th>
-                            <th className="text-right py-2 px-2 font-semibold text-gray-700">Total</th>
+                            <th className="text-left py-2 px-2 font-semibold text-gray-700 dark:text-gray-300">Party</th>
+                            <th className="text-right py-2 px-2 font-semibold text-gray-700 dark:text-gray-300">Yea</th>
+                            <th className="text-right py-2 px-2 font-semibold text-gray-700 dark:text-gray-300">Nay</th>
+                            <th className="text-right py-2 px-2 font-semibold text-gray-700 dark:text-gray-300">Total</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -192,7 +192,7 @@ export default function PartyLoyaltyStats({ stats, partyColors, votes = [] }: Pa
                             return (
                               <tr 
                                 key={item.party} 
-                                className={`border-b border-gray-100 hover:bg-gray-50 ${item.total === 0 ? 'opacity-50' : ''}`}
+                                className={`border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800/50 ${item.total === 0 ? 'opacity-50' : ''}`}
                               >
                                 <td className="py-2 px-2">
                                   <div className="flex items-center gap-2">
@@ -205,31 +205,31 @@ export default function PartyLoyaltyStats({ stats, partyColors, votes = [] }: Pa
                                         className="rounded-sm flex-shrink-0"
                                       />
                                     )}
-                                    <span className="font-medium text-gray-900">{item.abbreviation}</span>
+                                    <span className="font-medium text-gray-900 dark:text-white">{item.abbreviation}</span>
                                   </div>
                                 </td>
                                 <td className="text-right py-2 px-2">
                                   <div className="flex flex-col items-end">
-                                    <span className={`font-semibold ${item.total > 0 ? 'text-green-700' : 'text-gray-400'}`}>
+                                    <span className={`font-semibold ${item.total > 0 ? 'text-green-700 dark:text-green-400' : 'text-gray-400 dark:text-gray-500'}`}>
                                       {item.yea}
                                     </span>
                                     {item.total > 0 && (
-                                      <span className="text-xs text-gray-500">{yeaPercent}%</span>
+                                      <span className="text-xs text-gray-500 dark:text-gray-400">{yeaPercent}%</span>
                                     )}
                                   </div>
                                 </td>
                                 <td className="text-right py-2 px-2">
                                   <div className="flex flex-col items-end">
-                                    <span className={`font-semibold ${item.total > 0 ? 'text-red-700' : 'text-gray-400'}`}>
+                                    <span className={`font-semibold ${item.total > 0 ? 'text-red-700 dark:text-red-400' : 'text-gray-400 dark:text-gray-500'}`}>
                                       {item.nay}
                                     </span>
                                     {item.total > 0 && (
-                                      <span className="text-xs text-gray-500">{nayPercent}%</span>
+                                      <span className="text-xs text-gray-500 dark:text-gray-400">{nayPercent}%</span>
                                     )}
                                   </div>
                                 </td>
                                 <td className="text-right py-2 px-2">
-                                  <span className={`font-semibold ${item.total > 0 ? 'text-gray-900' : 'text-gray-400'}`}>
+                                  <span className={`font-semibold ${item.total > 0 ? 'text-gray-900 dark:text-white' : 'text-gray-400 dark:text-gray-500'}`}>
                                     {item.total}
                                   </span>
                                 </td>
@@ -240,7 +240,7 @@ export default function PartyLoyaltyStats({ stats, partyColors, votes = [] }: Pa
                       </table>
                     </div>
                     {votesWithSponsor < totalBillVotes && (
-                      <p className="text-xs text-gray-500 mt-2 italic">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 italic">
                         Note: {totalBillVotes - votesWithSponsor} bill vote(s) missing sponsor party information
                       </p>
                     )}

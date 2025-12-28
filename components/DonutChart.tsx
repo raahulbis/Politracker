@@ -33,8 +33,9 @@ export default function DonutChart({
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke="#E5E7EB"
+            stroke="currentColor"
             strokeWidth={strokeWidth}
+            className="text-gray-200 dark:text-slate-700"
           />
           {/* Progress circle */}
           <circle
@@ -53,11 +54,11 @@ export default function DonutChart({
         {/* Percentage text in center */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900">
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">
               {percentage.toFixed(0)}%
             </div>
             {label && (
-              <div className="text-xs text-gray-500 mt-1">
+              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 {label}
               </div>
             )}

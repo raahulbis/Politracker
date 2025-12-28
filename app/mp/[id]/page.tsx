@@ -138,7 +138,7 @@ export default function MPPage() {
 
   if (loadingProfile) {
     return (
-      <div className="min-h-screen bg-white dark:bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-[#000000] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400 mx-auto"></div>
           <p className="mt-4 text-gray-600 dark:text-gray-400">Loading MP profile...</p>
@@ -149,7 +149,7 @@ export default function MPPage() {
 
   if (error || !mp) {
     return (
-      <div className="min-h-screen bg-white dark:bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-[#000000] flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 dark:text-red-400">{error || 'MP not found'}</p>
         </div>
@@ -160,7 +160,7 @@ export default function MPPage() {
   const partyColors = getPartyColors(mp.party_name);
 
   return (
-    <main className="min-h-screen bg-[#f7f7f7] dark:bg-slate-900">
+    <main className="min-h-screen bg-[#f7f7f7] dark:bg-[#000000]">
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
         <div className="max-w-7xl mx-auto space-y-6">
           <MPProfile 
@@ -175,9 +175,9 @@ export default function MPPage() {
           {loadingExpenses ? (
             <div className="card">
               <div className="animate-pulse">
-                <div className="h-6 bg-gray-200 dark:bg-slate-700 rounded w-1/3 mb-4"></div>
-                <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-full mb-2"></div>
-                <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-5/6"></div>
+                <div className="h-6 bg-gray-200 dark:bg-[#0B0F14] rounded w-1/3 mb-4"></div>
+                <div className="h-4 bg-gray-200 dark:bg-[#0B0F14] rounded w-full mb-2"></div>
+                <div className="h-4 bg-gray-200 dark:bg-[#0B0F14] rounded w-5/6"></div>
               </div>
             </div>
           ) : expenses ? (
@@ -192,7 +192,7 @@ export default function MPPage() {
                   style={{ borderBottomColor: partyColors.primary }}
                 ></div>
                 <p className="text-gray-600 dark:text-gray-400">Calculating...</p>
-                <p className="text-sm text-gray-500 mt-2">Analyzing party loyalty statistics</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Analyzing party loyalty statistics</p>
               </div>
             </div>
           ) : stats ? (
@@ -212,7 +212,7 @@ export default function MPPage() {
                   className="animate-spin rounded-full h-10 w-10 border-b-2 mb-4"
                   style={{ borderBottomColor: partyColors.primary }}
                 ></div>
-                <p className="text-gray-600">Loading proposed bills...</p>
+                <p className="text-gray-600 dark:text-gray-400">Loading proposed bills...</p>
               </div>
             </div>
           )}
@@ -224,7 +224,7 @@ export default function MPPage() {
                   className="animate-spin rounded-full h-10 w-10 border-b-2 mb-4"
                   style={{ borderBottomColor: partyColors.primary }}
                 ></div>
-                <p className="text-gray-600">Loading voting history...</p>
+                <p className="text-gray-600 dark:text-gray-400">Loading voting history...</p>
               </div>
             </div>
           ) : stats ? (
