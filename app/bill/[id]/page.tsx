@@ -43,6 +43,9 @@ export default function BillPage() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [collapsedParties, setCollapsedParties] = useState<Set<string>>(new Set());
+  const [legisinfoData, setLegisinfoData] = useState<any>(null);
+  const [notesCollapsed, setNotesCollapsed] = useState(false);
+  const [webReferencesCollapsed, setWebReferencesCollapsed] = useState(true);
 
   useEffect(() => {
     const fetchBillData = async () => {
@@ -61,6 +64,29 @@ export default function BillPage() {
         
         const result = await response.json();
         setData(result);
+        
+        // Fetch LEGISinfo data if we have a session (do this regardless of votes)
+        if (result.bill?.session) {
+          // Fetch in background - don't block on this
+          fetch(
+            `/api/bill/${encodeURIComponent(billNumber)}/legisinfo?session=${encodeURIComponent(result.bill.session)}`
+          )
+            .then((legisinfoResponse) => {
+              if (legisinfoResponse.ok) {
+                return legisinfoResponse.json();
+              }
+              return null;
+            })
+            .then((legisinfoResult) => {
+              if (legisinfoResult) {
+                setLegisinfoData(legisinfoResult);
+              }
+            })
+            .catch((err) => {
+              // Silently fail - LEGISinfo data is optional
+              console.warn('Failed to fetch LEGISinfo data:', err);
+            });
+        }
       } catch (err) {
         console.error('Error fetching bill data:', err);
         setError('Failed to load bill data');
@@ -286,10 +312,28 @@ export default function BillPage() {
           {/* Bill Header */}
           <div className="card">
             <div className="mb-6">
-              {/* Bill Number */}
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">
-                {bill.bill_number}
-              </h1>
+              {/* Bill Number with Icon and LEGISinfo Link */}
+              <div className="flex items-center gap-3 mb-3">
+                <svg className="w-8 h-8 text-gray-600 dark:text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex-1">
+                  {bill.bill_number}
+                </h1>
+                {billUrl && (
+                  <a
+                    href={billUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline font-medium text-sm whitespace-nowrap"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    Read on LEGISinfo
+                  </a>
+                )}
+              </div>
               
               {/* Bill Title */}
               <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-6 leading-relaxed">
@@ -364,20 +408,85 @@ export default function BillPage() {
                 )}
               </div>
 
-              {/* LEGISinfo Link - Prominent */}
-              {billUrl && (
+              {/* Notes Section - Collapsible */}
+              {legisinfoData?.NotesEn && (
                 <div className="pt-4 border-t border-gray-200 dark:border-slate-700">
-                  <a
-                    href={billUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline font-medium"
+                  <button
+                    onClick={() => setNotesCollapsed(!notesCollapsed)}
+                    className="flex items-center justify-between w-full text-left"
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
+                      Notes
+                    </h3>
+                    <svg
+                      className={`w-5 h-5 text-gray-500 dark:text-gray-400 transition-transform ${notesCollapsed ? '' : 'rotate-180'}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
-                    Read on LEGISinfo
-                  </a>
+                  </button>
+                  {!notesCollapsed && (
+                    <div 
+                      className="mt-3 text-sm text-gray-700 dark:text-gray-300 [&_p]:mb-2 [&_ul]:list-disc [&_ul]:ml-6 [&_ol]:list-decimal [&_ol]:ml-6 [&_li]:mb-1"
+                      dangerouslySetInnerHTML={{ __html: legisinfoData.NotesEn }}
+                    />
+                  )}
+                </div>
+              )}
+
+              {/* Web References Section - Collapsible */}
+              {legisinfoData?.WebReferences && Array.isArray(legisinfoData.WebReferences) && legisinfoData.WebReferences.length > 0 && (
+                <div className="pt-4 border-t border-gray-200 dark:border-slate-700">
+                  <button
+                    onClick={() => setWebReferencesCollapsed(!webReferencesCollapsed)}
+                    className="flex items-center justify-between w-full text-left"
+                  >
+                    <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
+                      Web References
+                    </h3>
+                    <svg
+                      className={`w-5 h-5 text-gray-500 dark:text-gray-400 transition-transform ${webReferencesCollapsed ? '' : 'rotate-180'}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {!webReferencesCollapsed && (
+                    <div className="mt-3 space-y-2">
+                      {legisinfoData.WebReferences.map((ref: any, index: number) => (
+                        <div key={index} className="flex items-start gap-2">
+                          <svg className="w-5 h-5 text-gray-400 dark:text-gray-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                          </svg>
+                          <div className="flex-1 min-w-0">
+                            {ref.UrlEn || ref.Url ? (
+                              <a
+                                href={ref.UrlEn || ref.Url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline text-sm"
+                              >
+                                {ref.TitleEn || ref.Title || 'Web Reference'}
+                              </a>
+                            ) : (
+                              <span className="text-sm text-gray-700 dark:text-gray-300">
+                                {ref.TitleEn || ref.Title || 'Web Reference'}
+                              </span>
+                            )}
+                            {ref.WebReferenceTypeNameEn && (
+                              <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">
+                                ({ref.WebReferenceTypeNameEn})
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

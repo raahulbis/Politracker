@@ -369,30 +369,39 @@ export async function getBillWithMPVotes(billNumber: string): Promise<{
     motion_title: string | null;
   }>;
 }> {
-  // First, get the bill details - this should always work
+  // First, get the bill details using the same query pattern as Recent Activity
+  // This gets the latest version of the bill by ID (in case there are duplicates)
   let bill: any = null;
   try {
     const billSql = convertPlaceholders(`
       SELECT 
-        b.id,
-        b.bill_number,
-        b.title,
-        b.introduced_date,
-        b.status_code,
-        b.status,
-        b.law,
-        b.session,
-        b.sponsor_politician,
-        b.sponsor_party,
-        bc.name as category_name
-      FROM bills_motions b
-      LEFT JOIN bill_policy_categories bc ON b.policy_category_id = bc.id
-      WHERE b.bill_number = ?
-      ORDER BY b.introduced_date DESC
+        bm.id,
+        bm.bill_number,
+        bm.title,
+        bm.introduced_date,
+        bm.status_code,
+        bm.status,
+        bm.law,
+        bm.session,
+        bm.sponsor_politician,
+        COALESCE(
+          bm.sponsor_party,
+          (SELECT party_name FROM mps WHERE name = bm.sponsor_politician LIMIT 1)
+        ) as sponsor_party,
+        bpc.name as category_name
+      FROM bills_motions bm
+      LEFT JOIN bill_policy_categories bpc ON bm.policy_category_id = bpc.id
+      INNER JOIN (
+        SELECT bill_number, MAX(id) as max_id
+        FROM bills_motions
+        WHERE bill_number = ?
+        GROUP BY bill_number
+      ) latest ON bm.bill_number = latest.bill_number AND bm.id = latest.max_id
+      WHERE bm.bill_number = ?
       LIMIT 1
     `);
     
-    bill = await queryOne<any>(billSql, [billNumber]);
+    bill = await queryOne<any>(billSql, [billNumber, billNumber]);
   } catch (error) {
     console.error(`[getBillWithMPVotes] Error fetching bill ${billNumber}:`, error);
     return { bill: null, mpVotes: [] };
@@ -428,31 +437,38 @@ export async function getBillWithMPVotes(billNumber: string): Promise<{
       console.log(`[getBillWithMPVotes] No votes found for bill ${billNumber}`);
     } else {
       // Second query: Get the latest vote per MP using window function
-      const latestVotesSql = convertPlaceholders(`
-        SELECT 
-          m.id as mp_id,
-          m.name as mp_name,
-          m.party_name,
-          m.district_name,
-          m.photo_url,
-          v.vote_type,
-          v.date as vote_date,
-          v.motion_title
-        FROM (
+      // Use a simpler approach that's more reliable
+      try {
+        const latestVotesSql = convertPlaceholders(`
           SELECT 
-            v2.mp_id,
-            v2.vote_type,
-            v2.date,
-            v2.motion_title,
-            ROW_NUMBER() OVER (PARTITION BY v2.mp_id ORDER BY v2.date DESC) as rn
-          FROM votes v2
-          WHERE (v2.bill_id = ? OR v2.bill_number = ?)
-        ) v
-        INNER JOIN mps m ON v.mp_id = m.id
-        WHERE v.rn = 1
-      `);
-      
-      mpVotes = await queryAll<any>(latestVotesSql, [billId, billNumber]);
+            m.id as mp_id,
+            m.name as mp_name,
+            m.party_name,
+            m.district_name,
+            m.photo_url,
+            v.vote_type,
+            v.date as vote_date,
+            v.motion_title
+          FROM (
+            SELECT 
+              v2.mp_id,
+              v2.vote_type,
+              v2.date,
+              v2.motion_title,
+              ROW_NUMBER() OVER (PARTITION BY v2.mp_id ORDER BY v2.date DESC) as rn
+            FROM votes v2
+            WHERE (v2.bill_id = ? OR v2.bill_number = ?)
+          ) v
+          INNER JOIN mps m ON v.mp_id = m.id
+          WHERE v.rn = 1
+        `);
+        
+        mpVotes = await queryAll<any>(latestVotesSql, [billId, billNumber]);
+      } catch (voteError) {
+        console.error(`[getBillWithMPVotes] Error in votes query for bill ${billNumber}:`, voteError);
+        // Don't throw - just return empty votes array
+        mpVotes = [];
+      }
       
       // Sort by party and name
       mpVotes.sort((a, b) => {
