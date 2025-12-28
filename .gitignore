@@ -65,3 +65,4 @@ scripts/import-votes-from-sql.ts
 /data/*.sql
 /data/politracker-dump-*.sql
 RAILWAY_CACHE_CLEAR.md
+REGENERATE_LOCKFILE.md
