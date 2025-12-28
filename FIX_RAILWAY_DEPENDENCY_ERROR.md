@@ -16,7 +16,7 @@ Run these commands in your local project directory:
 
 ```bash
 # Make sure you're in the project root
-cd /Users/raahulbiswas/Documents/Dev/politracker
+cd /path/to/politracker
 
 # Remove old lock file if it exists (optional)
 rm -f package-lock.json
