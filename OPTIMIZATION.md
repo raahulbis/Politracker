@@ -112,3 +112,4 @@ The system logs cache hits/misses:
 - Logs show when API calls are made vs when cache is used
 
 
+

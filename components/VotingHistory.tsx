@@ -249,8 +249,8 @@ export default function VotingHistory({ votingRecord, partyColors }: VotingHisto
                   });
                 };
 
-                // Determine status icon
-                const isSupported = latestVote.result === 'Agreed To';
+                // Determine status icon based on vote_type (Yea = checkmark, Nay = X)
+                const isSupported = latestVote.vote_type === 'Yea';
 
                 return (
                   <div 
@@ -348,7 +348,8 @@ export default function VotingHistory({ votingRecord, partyColors }: VotingHisto
                         {hasMultipleVotes && isExpanded && (
                           <div className="mt-4 ml-6 space-y-4 border-l-2 border-gray-100 dark:border-slate-700 pl-4">
                             {pastVotes.map((vote) => {
-                              const voteIsSupported = vote.result === 'Agreed To';
+                              // Determine status icon based on vote_type (Yea = checkmark, Nay = X)
+                              const voteIsSupported = vote.vote_type === 'Yea';
 
                               return (
                                 <div key={vote.id} className="flex items-start gap-3">

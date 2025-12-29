@@ -16,3 +16,4 @@ echo "  git add package-lock.json"
 echo "  git commit -m 'Fix package-lock.json - regenerate with consistent dependencies'"
 echo "  git push"
 
+

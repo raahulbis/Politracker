@@ -2,10 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getMPByDistrict, getMPVotingRecord } from '@/lib/db/queries';
 import { getPartyLoyaltyStats, getMPMotions } from '@/lib/api/commons';
 import { getCachedPartyLoyaltyStats, cachePartyLoyaltyStats } from '@/lib/api/openparliament-cache';
-import { getMPVotingRecord as getOpenParliamentVotes } from '@/lib/api/openparliament';
 import { queryOne, convertPlaceholders } from '@/lib/db/database';
 import { getCurrentSessionStartDate } from '@/lib/db/sessions';
-import type { Vote, VotingRecord, MotionBreakdown } from '@/types';
+import type { VotingRecord, MotionBreakdown } from '@/types';
 
 export async function GET(
   request: NextRequest,
@@ -38,92 +37,11 @@ export async function GET(
       dbMP = await queryOne<{ id: number }>(dbMPSql, [mp.name, mp.district_name]);
     }
     
-    // Get votes from database (historical votes from bulk import)
+    // Get votes from database only (no API calls)
     // Pass database ID directly to avoid unnecessary lookup
     let votingRecord = await getMPVotingRecord(mpIdentifier, mp.name, dbMP?.id);
     
-    // Get latest vote date from database
-    let latestDate: string | null = null;
-    if (dbMP && votingRecord.votes.length > 0) {
-      latestDate = votingRecord.votes[0].date; // Votes are sorted DESC, so first is latest
-    }
-    
-    // Fetch votes from OpenParliament API
-    // If no votes in DB, fetch more votes (500) to populate the database
-    // If votes exist, fetch more votes (500) to ensure we get all votes
-    let newVotes: Vote[] = [];
-    const hasExistingVotes = votingRecord.votes.length > 0;
-    const fetchLimit = 500; // Always fetch 500 votes to ensure we get all available votes
-    
-    // Validate MP name before making API call
-    if (!mp.name || typeof mp.name !== 'string' || mp.name.trim().length === 0) {
-      console.error(`Invalid MP name for district ${mp.district_name}: ${mp.name}`);
-      return NextResponse.json(
-        { error: 'MP name is missing or invalid' },
-        { status: 500 }
-      );
-    }
-    
-    try {
-      console.log(`Fetching votes from OpenParliament for ${mp.name} (limit: ${fetchLimit}, existing votes: ${votingRecord.votes.length})`);
-      const openParliamentRecord = await getOpenParliamentVotes(mp.name, fetchLimit);
-      
-      if (openParliamentRecord.votes.length === 0) {
-        console.log(`No votes found in OpenParliament for ${mp.name}`);
-      } else {
-        console.log(`Retrieved ${openParliamentRecord.votes.length} votes from OpenParliament for ${mp.name}`);
-      }
-      
-      if (latestDate) {
-        // Only get votes newer than what we have in database
-        newVotes = openParliamentRecord.votes.filter(vote => {
-          return new Date(vote.date) > new Date(latestDate!);
-        });
-        console.log(`Found ${newVotes.length} new votes for ${mp.name} (since ${latestDate})`);
-      } else {
-        // No existing votes, use all from OpenParliament
-        newVotes = openParliamentRecord.votes;
-        console.log(`No existing votes in DB, using ${newVotes.length} votes from OpenParliament for ${mp.name}`);
-      }
-      
-      // Merge new votes with existing votes
-      if (newVotes.length > 0) {
-        const combinedVotes = [...newVotes, ...votingRecord.votes];
-        // Sort by date descending
-        combinedVotes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-        
-        votingRecord = {
-          ...votingRecord,
-          votes: combinedVotes,
-          total_votes: combinedVotes.length,
-        };
-        
-        // Save new votes to database (non-blocking, fire and forget)
-        if (dbMP) {
-          // Save asynchronously so it doesn't block the response
-          import('@/lib/db/save-votes').then(({ saveNewVotesToDB }) => {
-            saveNewVotesToDB(dbMP.id, newVotes).catch(error => {
-              console.error(`Error saving new votes to DB for ${mp.name}:`, error);
-            });
-          });
-        }
-      } else if (!hasExistingVotes && openParliamentRecord.votes.length === 0) {
-        // No votes in DB and OpenParliament returned no votes - this might be a new MP or API issue
-        console.warn(`No votes found for ${mp.name} in database or OpenParliament. This might be a new MP or the name might not match OpenParliament's records.`);
-      }
-    } catch (error) {
-      console.error(`Error fetching votes from OpenParliament for ${mp.name}:`, error);
-      if (error instanceof Error) {
-        console.error(`Error details: ${error.message}`);
-        if (error.stack) {
-          console.error(`Stack trace: ${error.stack}`);
-        }
-      }
-      // Continue with database votes only (which might be empty)
-      if (!hasExistingVotes) {
-        console.warn(`No votes available for ${mp.name} - database is empty and OpenParliament fetch failed`);
-      }
-    }
+    console.log(`Retrieved ${votingRecord.votes.length} votes from database for ${mp.name}`);
     
     // Fetch motions from OpenParliament
     // TODO: Add logic to only fetch new bills (similar to votes)
