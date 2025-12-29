@@ -4,7 +4,7 @@ import { getPartyLoyaltyStats, getMPMotions } from '@/lib/api/commons';
 import { getCachedPartyLoyaltyStats, cachePartyLoyaltyStats } from '@/lib/api/openparliament-cache';
 import { queryOne, convertPlaceholders } from '@/lib/db/database';
 import { getCurrentSessionStartDate } from '@/lib/db/sessions';
-import type { VotingRecord, MotionBreakdown } from '@/types';
+import type { Vote, VotingRecord, MotionBreakdown } from '@/types';
 
 export async function GET(
   request: NextRequest,
