@@ -133,12 +133,19 @@ export default function Home() {
     fetchStats();
   }, []);
 
-  const handleSearch = async (query: string, isNameSearch: boolean) => {
+  const handleSearch = async (query: string, searchType: 'postal_code' | 'name' | 'riding') => {
     setLoading(true);
     setError(null);
 
     try {
-      const searchParam = isNameSearch ? 'name' : 'postalCode';
+      let searchParam: string;
+      if (searchType === 'postal_code') {
+        searchParam = 'postalCode';
+      } else if (searchType === 'riding') {
+        searchParam = 'riding';
+      } else {
+        searchParam = 'name';
+      }
       const response = await fetch(`/api/mp/search?${searchParam}=${encodeURIComponent(query)}`);
       
       if (!response.ok) {

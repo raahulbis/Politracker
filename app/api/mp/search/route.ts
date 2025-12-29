@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPostalCodeFromCache, cachePostalCode, getMPByPersonId, searchMPsByName } from '@/lib/db/queries';
+import { getPostalCodeFromCache, cachePostalCode, getMPByPersonId, searchMPsByName, getMPByDistrict } from '@/lib/db/queries';
 import { normalizePostalCode, validatePostalCodeFormat } from '@/lib/utils/postal-code';
 import { fetchPostalCodeData } from '@/lib/api/represent';
 import { queryOne, queryAll, convertPlaceholders } from '@/lib/db/database';
@@ -8,6 +8,29 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const postalCode = searchParams.get('postalCode');
   const name = searchParams.get('name');
+  const riding = searchParams.get('riding');
+
+  // If riding is provided, search by riding/district name
+  if (riding) {
+    try {
+      const mp = await getMPByDistrict(riding.trim());
+      
+      if (!mp) {
+        return NextResponse.json(
+          { error: 'No MP found for that riding.' },
+          { status: 404 }
+        );
+      }
+      
+      return NextResponse.json(mp);
+    } catch (error: any) {
+      console.error('Error searching for MP by riding:', error);
+      return NextResponse.json(
+        { error: 'Failed to search for MP by riding.' },
+        { status: 500 }
+      );
+    }
+  }
 
   // If name is provided, search by name
   if (name) {
@@ -40,7 +63,7 @@ export async function GET(request: NextRequest) {
   // Otherwise, search by postal code
   if (!postalCode) {
     return NextResponse.json(
-      { error: 'Either postal code or name is required' },
+      { error: 'Either postal code, name, or riding is required' },
       { status: 400 }
     );
   }

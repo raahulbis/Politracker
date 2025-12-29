@@ -93,7 +93,7 @@ export default function MPProfile({
       <div className="card">
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-center lg:items-start">
           {/* Left: Photo + Name + Riding */}
-          <div className="flex items-center gap-4 lg:gap-6 flex-shrink-0 w-full lg:w-auto">
+          <div className="flex items-start gap-4 lg:gap-6 w-full lg:w-auto lg:max-w-md lg:min-w-0">
             {mp.photo_url && (
               <div className="flex-shrink-0">
                 <img
@@ -121,7 +121,7 @@ export default function MPProfile({
                 </div>
               )}
               {mp.parliamentary_positions && mp.parliamentary_positions.length > 0 && (
-                <div className="mt-1">
+                <div className="mt-1 space-y-0.5">
                   {mp.parliamentary_positions
                     .filter(pos => pos.title && (!pos.to_date_time || pos.to_date_time === null))
                     .map((pos, index) => (
@@ -135,7 +135,7 @@ export default function MPProfile({
           </div>
 
           {/* Right: KPI Tiles */}
-          <div className="flex-1 w-full lg:w-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 items-stretch">
+          <div className="flex-1 w-full lg:w-auto min-w-0 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 items-stretch">
             <KPITile
               label="Salary"
               value={formatCurrency(salary)}

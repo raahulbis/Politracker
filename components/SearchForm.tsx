@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 
+type SearchType = 'postal_code' | 'name' | 'riding';
+
 interface SearchFormProps {
-  onSearch: (query: string, isNameSearch: boolean) => void;
+  onSearch: (query: string, searchType: SearchType) => void;
   loading: boolean;
 }
 
@@ -79,10 +81,24 @@ export default function SearchForm({ onSearch, loading }: SearchFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setHasBlurred(true);
-    performSearch(query.trim());
+    // If there's a selected suggestion or a matching suggestion, use its type
+    let searchType: SearchType | undefined;
+    if (selectedIndex >= 0 && suggestions[selectedIndex]) {
+      const suggestion = suggestions[selectedIndex];
+      searchType = suggestion.type === 'postal_code' ? 'postal_code' : suggestion.type === 'riding' ? 'riding' : 'name';
+    } else if (suggestions.length > 0) {
+      // Check if query matches any suggestion value exactly
+      const matchingSuggestion = suggestions.find(
+        s => s.value.toLowerCase() === query.trim().toLowerCase()
+      );
+      if (matchingSuggestion) {
+        searchType = matchingSuggestion.type === 'postal_code' ? 'postal_code' : matchingSuggestion.type === 'riding' ? 'riding' : 'name';
+      }
+    }
+    performSearch(query.trim(), searchType);
   };
 
-  const performSearch = (searchQuery: string) => {
+  const performSearch = (searchQuery: string, searchType?: SearchType) => {
     if (!searchQuery) {
       setError('Please enter a postal code, MP name, or riding');
       return;
@@ -91,19 +107,27 @@ export default function SearchForm({ onSearch, loading }: SearchFormProps) {
     // Clear any previous error
     setError(null);
 
-    // Determine if it's a postal code or name search
-    const normalized = searchQuery.replace(/\s+/g, '').toUpperCase();
-    const looksLikePostalCode = /^[A-Z]\d[A-Z]\d[A-Z]\d$/.test(normalized) && normalized.length === 6;
+    // Determine search type if not provided
+    let finalSearchType: SearchType;
+    if (searchType) {
+      finalSearchType = searchType;
+    } else {
+      // Auto-detect search type
+      const normalized = searchQuery.replace(/\s+/g, '').toUpperCase();
+      const looksLikePostalCode = /^[A-Z]\d[A-Z]\d[A-Z]\d$/.test(normalized) && normalized.length === 6;
+      finalSearchType = looksLikePostalCode ? 'postal_code' : 'name';
+    }
     
     setShowSuggestions(false);
-    onSearch(searchQuery.trim(), !looksLikePostalCode);
+    onSearch(searchQuery.trim(), finalSearchType);
   };
 
   const handleSuggestionClick = (suggestion: AutocompleteSuggestion) => {
     setQuery(suggestion.value);
     setShowSuggestions(false);
     setHasBlurred(true);
-    performSearch(suggestion.value);
+    // Pass the suggestion type to performSearch
+    performSearch(suggestion.value, suggestion.type === 'postal_code' ? 'postal_code' : suggestion.type === 'riding' ? 'riding' : 'name');
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -178,7 +202,7 @@ export default function SearchForm({ onSearch, loading }: SearchFormProps) {
             onKeyDown={handleKeyDown}
             onFocus={handleFocus}
             onBlur={handleBlur}
-            placeholder="K1A 0A6 or MP name"
+            placeholder="K1A 0A6, MP name, or riding"
             className={`w-full pl-14 ${query.trim() && !loading ? 'pr-28' : 'pr-5'} py-4 rounded-full focus:outline-none bg-white/80 dark:bg-[#0B0F14]/80 backdrop-blur-sm text-gray-900 dark:text-gray-100 text-base shadow-lg border transition-all duration-200 ${
               isFocused
                 ? 'shadow-xl border-gray-300/50 dark:border-slate-600/50 ring-4 ring-blue-500/10 dark:ring-blue-400/20 bg-white dark:bg-[#0B0F14]'

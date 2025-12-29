@@ -13,16 +13,16 @@ export default function KPITile({ label, value, timeframe, tooltip }: KPITilePro
     : value;
 
   return (
-    <div className="group relative h-full">
-      <div className="card h-full min-h-[100px] flex flex-col">
-        <div className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">
+    <div className="group relative h-full min-w-0 overflow-hidden">
+      <div className="card h-full min-h-[100px] flex flex-col overflow-hidden">
+        <div className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5 break-words">
           {label}
         </div>
-        <div className="text-2xl font-semibold text-gray-900 dark:text-white mb-1 leading-tight flex-grow">
+        <div className="text-2xl font-semibold text-gray-900 dark:text-white mb-1 leading-tight flex-grow break-words min-w-0 overflow-hidden">
           {formattedValue}
         </div>
         {timeframe && (
-          <div className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+          <div className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 break-words">
             {timeframe}
           </div>
         )}
