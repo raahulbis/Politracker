@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { queryAll, queryOne, convertPlaceholders } from '@/lib/db/database';
-import { getCurrentSessionStartDate } from '@/lib/db/sessions';
+import { getCurrentSessionStartDate, getCurrentSession } from '@/lib/db/sessions';
 
 export async function GET() {
   try {
@@ -256,6 +256,38 @@ export async function GET() {
       }
     }
 
+    // 9. Recent Motions (from motions table for current session)
+    // Get current session's session_number (which is used as parliament_number)
+    const currentSession = await getCurrentSession();
+    
+    const recentMotions = currentSession ? await queryAll<{
+      decision_division_number: number;
+      name: string;
+      result: string;
+      number_of_yeas: number;
+      number_of_nays: number;
+      number_of_paired: number;
+      date: Date | string;
+      type: string;
+      parliament_number: number;
+      session_number: number;
+    }>(convertPlaceholders(`
+      SELECT 
+        decision_division_number,
+        name,
+        result,
+        number_of_yeas,
+        number_of_nays,
+        number_of_paired,
+        date,
+        type,
+        parliament_number,
+        session_number
+      FROM motions
+      WHERE parliament_number = $1
+      ORDER BY date DESC, decision_division_number DESC
+    `), [currentSession.session_number]) : [];
+
     return NextResponse.json({
       mpsPerParty,
       expensesByParty,
@@ -265,6 +297,7 @@ export async function GET() {
       highestPaid: highestPaid || null,
       billStats: billStats || { total_bills: 0, passed_bills: 0, law_bills: 0, outside_order_precedence: 0, at_house: 0, at_senate: 0, still_in_reading: 0 },
       recentBills,
+      recentMotions,
     });
   } catch (error) {
     console.error('Error fetching statistics:', error);

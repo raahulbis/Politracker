@@ -51,6 +51,18 @@ interface Stats {
     sponsor_party: string | null;
     category_name: string | null;
   }>;
+  recentMotions: Array<{
+    decision_division_number: number;
+    name: string;
+    result: string;
+    number_of_yeas: number;
+    number_of_nays: number;
+    number_of_paired: number;
+    date: Date | string;
+    type: string;
+    parliament_number: number;
+    session_number: number;
+  }>;
 }
 
 export default function Home() {
@@ -382,12 +394,23 @@ export default function Home() {
               {/* Divider */}
               <div className="border-t border-gray-100 dark:border-slate-700 my-8"></div>
 
-              {/* Recent Activity */}
-              <div>
+              {/* Bills Section */}
+              <div className="mb-12">
                 <h3 className="text-[15px] font-semibold text-gray-800 dark:text-gray-100 mb-6">
-                  Recent Activity
+                  Bills
                 </h3>
                 <RecentBillsContent bills={stats.recentBills} />
+              </div>
+
+              {/* Divider */}
+              <div className="border-t border-gray-100 dark:border-slate-700 my-8"></div>
+
+              {/* Motions Section */}
+              <div>
+                <h3 className="text-[15px] font-semibold text-gray-800 dark:text-gray-100 mb-6">
+                  Motions
+                </h3>
+                <RecentMotionsContent motions={stats.recentMotions} />
               </div>
             </div>
           )}
@@ -777,7 +800,7 @@ function RecentBillsContent({
 }) {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage] = useState(5);
   
   // Filter states
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -1186,25 +1209,249 @@ function RecentBillsContent({
                 Page {currentPage} of {totalPages}
               </div>
 
-              {/* Middle: Show selector */}
+            {/* Right: Previous/Next buttons */}
               <div className="flex items-center gap-2">
-                <label htmlFor="page-size" className="text-sm text-gray-600 dark:text-gray-400">
-                  Show:
-                </label>
-                <select
-                  id="page-size"
-                  value={itemsPerPage}
-                  onChange={(e) => {
-                    setItemsPerPage(Number(e.target.value));
-                    setCurrentPage(1);
-                  }}
-                  className="px-2 py-1.5 border border-gray-300 dark:border-slate-600 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-[#0B0F14] focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-[#0B0F14] text-gray-900 dark:text-gray-100 appearance-none cursor-pointer"
-                style={{ backgroundImage: "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")", backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2rem' }}
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-[#0B0F14] ${
+                  currentPage === 1
+                    ? 'bg-gray-100 dark:bg-[#0B0F14] text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-50'
+                    : 'bg-white dark:bg-[#0B0F14] text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600 hover:border-gray-400 dark:hover:border-slate-500'
+                }`}
               >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-              </select>
+                Previous
+              </button>
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+                className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-[#0B0F14] ${
+                  currentPage === totalPages
+                    ? 'bg-gray-100 dark:bg-[#0B0F14] text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-50'
+                    : 'bg-white dark:bg-[#0B0F14] text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600 hover:border-gray-400 dark:hover:border-slate-500'
+                }`}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+function RecentMotionsContent({ 
+  motions 
+}: { 
+  motions: Array<{
+    decision_division_number: number;
+    name: string;
+    result: string;
+    number_of_yeas: number;
+    number_of_nays: number;
+    number_of_paired: number;
+    date: Date | string;
+    type: string;
+    parliament_number: number;
+    session_number: number;
+  }>
+}) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Helper function to strip JSON-like formatting if present
+  const cleanValue = (value: string | null | undefined): string => {
+    if (!value) return '';
+    const str = String(value);
+    // Check if it looks like {"value"} or {"value"} format and strip it
+    const match = str.match(/^\{\"(.+)\"\}$/);
+    if (match) {
+      return match[1];
+    }
+    // Also handle case where it might be just wrapped in quotes
+    if (str.startsWith('"') && str.endsWith('"')) {
+      return str.slice(1, -1);
+    }
+    return str;
+  };
+
+  // Filter motions by search query
+  const filteredMotions = useMemo(() => {
+    return motions.filter(motion => {
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase();
+        const nameMatch = cleanValue(motion.name)?.toLowerCase().includes(query);
+        const typeMatch = cleanValue(motion.type)?.toLowerCase().includes(query);
+        const resultMatch = cleanValue(motion.result)?.toLowerCase().includes(query);
+        return nameMatch || typeMatch || resultMatch;
+      }
+      return true;
+    });
+  }, [motions, searchQuery]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredMotions.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedMotions = filteredMotions.slice(startIndex, endIndex);
+
+  // Reset to page 1 when search changes
+  const handleSearchChange = () => {
+                    setCurrentPage(1);
+  };
+
+  const formatDate = (dateInput: Date | string) => {
+    const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
+    return date.toLocaleDateString('en-CA', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  };
+
+  const getResultBadge = (result: string) => {
+    const cleanResult = cleanValue(result);
+    const resultLower = cleanResult.toLowerCase();
+    if (resultLower.includes('agreed') || resultLower.includes('passed')) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
+          {cleanResult}
+        </span>
+      );
+    } else if (resultLower.includes('negatived') || resultLower.includes('defeated')) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300">
+          {cleanResult}
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-[#0B0F14] text-gray-800 dark:text-gray-200">
+        {cleanResult}
+      </span>
+    );
+  };
+
+  if (motions.length === 0) {
+    return (
+      <p className="text-sm text-gray-500 dark:text-gray-400">No recent motions found.</p>
+    );
+  }
+
+  return (
+    <>
+      {/* Search Bar */}
+      <div className="mb-6">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Search with clear icon - macOS Spotlight style */}
+          <div className="flex-1 min-w-[200px] relative">
+            {/* Search Icon */}
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </div>
+            <input
+              id="motion-search"
+              type="text"
+              placeholder="Motion name, type, or keyword"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                handleSearchChange();
+              }}
+              className={`w-full pl-11 ${searchQuery ? 'pr-8' : 'pr-4'} py-1.5 rounded-full text-sm focus:outline-none bg-white dark:bg-[#0B0F14] text-gray-900 dark:text-gray-100 border transition-all duration-200 border-gray-300 dark:border-slate-600 focus:border-gray-300 dark:focus:border-slate-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-[#0B0F14] focus:border-blue-500 dark:focus:border-blue-400`}
+            />
+            {searchQuery && (
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  handleSearchChange();
+                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none transition-colors"
+                aria-label="Clear search"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Motions Feed */}
+      <div className="space-y-0">
+        {paginatedMotions.length === 0 ? (
+          <div className="py-12 text-center text-gray-500 dark:text-gray-400">
+            No motions match your search.
+          </div>
+        ) : (
+          paginatedMotions.map((motion) => {
+            return (
+              <div 
+                key={motion.decision_division_number}
+                className="py-4 px-4 -mx-4 border-b border-gray-100 dark:border-slate-700 last:border-b-0"
+              >
+                {/* Line 1: Division number + Name */}
+                <div className="flex items-start justify-between gap-4 mb-1.5">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-semibold text-gray-800 dark:text-gray-100 flex-shrink-0">
+                        Division #{motion.decision_division_number}
+                      </span>
+                    </div>
+                    <h3 className="text-[15px] font-medium text-gray-800 dark:text-gray-100 line-clamp-2 leading-relaxed">
+                      {cleanValue(motion.name)}
+                    </h3>
+                  </div>
+                </div>
+
+                {/* Line 2: Result • Type • Vote counts • Date */}
+                <div className="flex items-center gap-2 flex-wrap text-xs text-gray-600 dark:text-gray-400">
+                  {getResultBadge(motion.result)}
+                  <span>•</span>
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300">
+                    {cleanValue(motion.type)}
+                  </span>
+                  <span>•</span>
+                  <span className="text-green-700 dark:text-green-400 font-medium">{motion.number_of_yeas} Yeas</span>
+                  <span>•</span>
+                  <span className="text-red-700 dark:text-red-400 font-medium">{motion.number_of_nays} Nays</span>
+                  {motion.number_of_paired > 0 && (
+                    <>
+                      <span>•</span>
+                      <span className="text-gray-600 dark:text-gray-400">{motion.number_of_paired} Paired</span>
+                    </>
+                  )}
+                  <span>•</span>
+                  <span>{formatDate(motion.date)}</span>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-6 pt-4 border-t border-gray-100 dark:border-slate-700">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            {/* Left: Page info */}
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              Page {currentPage} of {totalPages}
             </div>
 
             {/* Right: Previous/Next buttons */}
@@ -1223,10 +1470,10 @@ function RecentBillsContent({
               <button
                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                 disabled={currentPage === totalPages}
-                className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-[#0B0F14] ${
                   currentPage === totalPages
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-50'
-                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400'
+                    ? 'bg-gray-100 dark:bg-[#0B0F14] text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-50'
+                    : 'bg-white dark:bg-[#0B0F14] text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600 hover:border-gray-400 dark:hover:border-slate-500'
                 }`}
               >
                 Next

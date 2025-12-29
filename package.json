@@ -25,6 +25,7 @@
     "db:sync-latest-votes": "tsx scripts/sync-latest-votes.ts",
     "db:sync-votes-nightly": "tsx scripts/sync-votes-nightly.ts",
     "db:sync-votes-from-bills": "tsx scripts/sync-votes-from-bills.ts",
+    "db:sync-votes-from-motions": "tsx scripts/sync-votes-from-motions.ts",
     "db:sync-votes-bulk-import": "tsx scripts/sync-votes-bulk-import.ts",
     "db:backfill-vote-bill-ids": "tsx scripts/backfill-vote-bill-ids.ts",
     "db:clear-caches": "tsx scripts/clear-all-caches.ts",
@@ -42,6 +43,9 @@
     "db:add-sponsor-party-column": "tsx scripts/add-sponsor-party-column.ts",
     "db:add-updated-at-column": "tsx scripts/add-updated-at-column.ts",
     "db:dump": "tsx scripts/dump-database-pg.ts",
+    "db:dump-motions": "tsx scripts/dump-motions-table.ts",
+    "db:setup-motions": "tsx scripts/setup-motions-table.ts",
+    "db:sync-motions": "tsx scripts/sync-house-of-commons-motions.ts",
     "download-logos": "tsx scripts/download-party-logos.ts"
   },
   "dependencies": {
@@ -59,7 +63,7 @@
     "@types/react-dom": "^18.3.0",
     "@types/xml2js": "^0.4.14",
     "autoprefixer": "^10.4.19",
-    "eslint": "^9.39.2",
+    "eslint": "^8.57.0",
     "eslint-config-next": "^16.1.1",
     "postcss": "^8.4.39",
     "tailwindcss": "^3.4.4",

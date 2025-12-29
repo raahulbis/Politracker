@@ -16,6 +16,8 @@
  */
 
 import { syncLatestVotes } from './sync-latest-votes';
+import { syncHouseOfCommonsMotions } from './sync-house-of-commons-motions';
+import { syncVotesFromMotions } from './sync-votes-from-motions';
 
 async function nightlyUpdate() {
   const startTime = new Date();
@@ -25,7 +27,17 @@ async function nightlyUpdate() {
   console.log('========================================\n');
   
   try {
-    // Run the vote sync
+    // Sync House of Commons motions
+    console.log('Syncing House of Commons motions...\n');
+    await syncHouseOfCommonsMotions();
+    console.log('');
+    
+    // Sync votes from motions
+    console.log('Syncing votes from motions...\n');
+    await syncVotesFromMotions();
+    console.log('');
+    
+    // Run the vote sync for bills
     await syncLatestVotes();
     
     const endTime = new Date();
